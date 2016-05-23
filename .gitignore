@@ -1,0 +1,7 @@
+build/*
+cache/*
+input/*
+output/*
+.settings/*
+.cproject
+.project
