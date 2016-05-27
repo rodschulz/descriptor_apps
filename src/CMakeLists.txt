@@ -9,6 +9,7 @@ if(NOT WIN32)
 	set(ColorReset	"${Esc}[m")
 	set(Red 		"${Esc}[31m")
 	set(Green 		"${Esc}[32m")
+	set(Yellow 		"${Esc}[33m")
 	set(Blue 		"${Esc}[34m")
 	set(Magenta 	"${Esc}[35m")
 	set(Cyan 		"${Esc}[36m")
@@ -21,25 +22,38 @@ set(CMAKE_PREFIX_PATH "/opt/ros/hydro/" ${CMAKE_PREFIX_PATH})
 find_package(PCL 1.7 REQUIRED)
 find_package(OpenCV 2.4.8 REQUIRED)
 find_package(yaml-cpp 0.5.2 REQUIRED)
-# find_package(Boost 1.46 COMPONENTS unit_test_framework REQUIRED)
+find_package(Boost 1.46 REQUIRED)
 # find_package(OpenMP REQUIRED)
 
-# Print information related to OpenCV version
-message(STATUS "${Cyan}Found OpenCV version ${OpenCV_VERSION}${ColorReset}")
-message(STATUS "${Cyan}OpenCV_INCLUDE_DIRS= ${OpenCV_INCLUDE_DIRS}${ColorReset}")
+# Print information related to libraries
+message(STATUS "${Yellow}PCL found version ${PCL_VERSION}${ColorReset}")
+message(STATUS "${Cyan}\tPCL_INCLUDE_DIRS = ${PCL_INCLUDE_DIRS}${ColorReset}")
+
+message(STATUS "${Yellow}Found OpenCV version ${OpenCV_VERSION}${ColorReset}")
+message(STATUS "${Cyan}\tOpenCV_INCLUDE_DIRS = ${OpenCV_INCLUDE_DIRS}${ColorReset}")
+
+message(STATUS "${Yellow}Found yaml-cpp version ${yaml-cpp_VERSION}${ColorReset}")
+message(STATUS "${Cyan}\tYAML_CPP_INCLUDE_DIR = ${YAML_CPP_INCLUDE_DIR}${ColorReset}")
+
+message(STATUS "${Yellow}Found Boost version ${Boost_LIB_VERSION}${ColorReset}")
+message(STATUS "${Cyan}\tBoost_INCLUDE_DIRS = ${Boost_INCLUDE_DIRS}${ColorReset}")
 
 # Add relevant include directories
 include_directories(${OpenCV_INCLUDE_DIRS})
 include_directories(${PCL_INCLUDE_DIRS})
-# include_directories(${Boost_INCLUDE_DIRS})
+include_directories(${Boost_INCLUDE_DIRS})
 include_directories(${YAML_CPP_INCLUDE_DIR})
 
 # Add relevant linking directories
 link_directories(${PCL_LIBRARY_DIRS})
-# link_directories(${Boost_LIBRARY_DIRS})
+link_directories(${Boost_LIBRARY_DIRS})
 
 # Set the build type for PCL
 set(PCL_BUILD_TYPE Release)
+
+# Set OpenMP flags to be used
+# set (CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${OpenMP_C_FLAGS}")
+# set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${OpenMP_CXX_FLAGS}")
 
 # Add extra required definitions
 add_definitions(${PCL_DEFINITIONS})
@@ -59,25 +73,27 @@ foreach(subdir ${lib_directories})
 	endif()
 endforeach()
 
-# Define files for each target
+# Set the linking dependencies for all the applications
+set(APPS_LINKING_DEPENDENCIES
+	clustering
+	descriptor
+	factories
+	io
+	metrics
+	utils
+	${PCL_LIBRARIES}
+	${YAML_CPP_LIBRARIES}
+	${OpenCV_LIBS})
+
+# Target Descriptor 
 file(GLOB DESCRIPTOR_SRC "Descriptor.cpp")
-
-# Set OpenMP flags so Descriptor can be linked
-# set (CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${OpenMP_C_FLAGS}")
-# set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${OpenMP_CXX_FLAGS}")
-
-# Target Descriptor
 add_executable(Descriptor ${DESCRIPTOR_SRC})
-target_link_libraries(Descriptor
-			clustering
-			descriptor
-			factories
-			io
-			metrics
-			utils
-			${PCL_LIBRARIES}
-			${YAML_CPP_LIBRARIES}
-			${OpenCV_LIBS})
+target_link_libraries(Descriptor ${APPS_LINKING_DEPENDENCIES})
+
+# Target Descriptor 
+file(GLOB DENSE_EVALUATOR_SRC "DenseEvaluator.cpp")
+add_executable(DenseEvaluator ${DENSE_EVALUATOR_SRC})
+target_link_libraries(DenseEvaluator ${APPS_LINKING_DEPENDENCIES})
 
 
 # get_cmake_property(_variableNames VARIABLES)

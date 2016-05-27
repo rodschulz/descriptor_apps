@@ -17,10 +17,10 @@ mkdir $folder
 cd $folder
 if [ "$type" == "-r" ] ; then
 	echo "Generating project for release"
-	cmake -G"Eclipse CDT4 - Unix Makefiles" -DCMAKE_BUILD_TYPE=Release ../src/
+	cmake -G "Eclipse CDT4 - Unix Makefiles" -DCMAKE_BUILD_TYPE=Release ../src/
 else
 	echo "Generating project for debug"
-	cmake -G"Eclipse CDT4 - Unix Makefiles" -DCMAKE_BUILD_TYPE=Debug ../src/
+	cmake -G "Eclipse CDT4 - Unix Makefiles" -DCMAKE_BUILD_TYPE=Debug ../src/
 fi
 cd ..
 
