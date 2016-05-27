@@ -32,6 +32,7 @@ message(STATUS "${Cyan}OpenCV_INCLUDE_DIRS= ${OpenCV_INCLUDE_DIRS}${ColorReset}"
 include_directories(${OpenCV_INCLUDE_DIRS})
 include_directories(${PCL_INCLUDE_DIRS})
 # include_directories(${Boost_INCLUDE_DIRS})
+include_directories(${YAML_CPP_INCLUDE_DIR})
 
 # Add relevant linking directories
 link_directories(${PCL_LIBRARY_DIRS})
@@ -48,8 +49,11 @@ add_definitions("-Wall")
 add_subdirectory(descriptor_lib)
 
 # Add the include directories of the descriptor's libraries
-file(GLOB lib_folders ./descriptor_lib/*)
-foreach(subdir ${lib_folders})
+file(GLOB lib_directories descriptor_lib/*)
+list(REMOVE_ITEM lib_directories
+	${CMAKE_CURRENT_SOURCE_DIR}/descriptor_lib/.git
+	${CMAKE_CURRENT_SOURCE_DIR}/descriptor_lib/test)
+foreach(subdir ${lib_directories})
 	if (IS_DIRECTORY ${subdir})
 		include_directories(${subdir}/include)
 	endif()
@@ -74,3 +78,9 @@ target_link_libraries(Descriptor
 			${PCL_LIBRARIES}
 			${YAML_CPP_LIBRARIES}
 			${OpenCV_LIBS})
+
+
+# get_cmake_property(_variableNames VARIABLES)
+# foreach (_variableName ${_variableNames})
+#     message(STATUS "${_variableName}=${${_variableName}}")
+# endforeach()

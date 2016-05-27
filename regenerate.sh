@@ -17,10 +17,10 @@ mkdir $folder
 cd $folder
 if [ "$type" == "-r" ] ; then
 	echo "Generating project for release"
-	cmake -DCMAKE_BUILD_TYPE=Release ../src/
+	cmake -G"Eclipse CDT4 - Unix Makefiles" -DCMAKE_BUILD_TYPE=Release ../src/
 else
 	echo "Generating project for debug"
-	cmake -DCMAKE_BUILD_TYPE=Debug ../src/
+	cmake -G"Eclipse CDT4 - Unix Makefiles" -DCMAKE_BUILD_TYPE=Debug ../src/
 fi
 cd ..
 
@@ -31,9 +31,6 @@ fi
 if [ ! -d "./output" ]; then
 	mkdir ./output/
 fi
-#if [ ! -d "./cache" ]; then
-#s	mkdir ./cache/
-#fi
 
 # Make 
 ./make.sh
