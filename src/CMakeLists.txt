@@ -90,11 +90,15 @@ file(GLOB DESCRIPTOR_SRC "Descriptor.cpp")
 add_executable(Descriptor ${DESCRIPTOR_SRC})
 target_link_libraries(Descriptor ${APPS_LINKING_DEPENDENCIES})
 
-# Target Descriptor 
+# Target DenseEvaluator 
 file(GLOB DENSE_EVALUATOR_SRC "DenseEvaluator.cpp")
 add_executable(DenseEvaluator ${DENSE_EVALUATOR_SRC})
 target_link_libraries(DenseEvaluator ${APPS_LINKING_DEPENDENCIES})
 
+# Target BoWCalculator 
+file(GLOB BOW_CALCULATOR_SRC "BoWCalculator.cpp")
+add_executable(BoWCalculator ${BOW_CALCULATOR_SRC})
+target_link_libraries(BoWCalculator ${APPS_LINKING_DEPENDENCIES})
 
 # get_cmake_property(_variableNames VARIABLES)
 # foreach (_variableName ${_variableNames})
