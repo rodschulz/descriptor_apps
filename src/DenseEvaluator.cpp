@@ -28,6 +28,7 @@ int main(int _argn, char **_argv)
 		// Check if enough arguments were given
 		if (_argn < 2)
 			throw std::runtime_error("Not enough exec params given\nUsage: DenseEvaluator <input_cloud_file>");
+		std::string cloudFilename = _argv[1];
 
 		// Clean the output directory
 		if (system("rm -rf " OUTPUT_FOLDER "*") != 0)
@@ -38,21 +39,27 @@ int main(int _argn, char **_argv)
 		if (!Config::load(CONFIG_LOCATION))
 			throw std::runtime_error((std::string) "Error reading config at " + workingDir + CONFIG_LOCATION);
 
+		// Retrieve useful parameters
+		double normalEstimationRadius = Config::getNormalEstimationRadius();
+		std::string cacheLocation = Config::getCacheDirectory();
+		DescriptorParams descriptorParams = Config::getDescriptorParams();
+		CloudSmoothingParams smoothingParams = Config::getCloudSmoothingParams();
+
 		// Load point cloud
-		std::cout << "Loading point cloud at " << _argv[1] << std::endl;
+		std::cout << "Loading point cloud at " << cloudFilename << std::endl;
 		pcl::PointCloud<pcl::PointNormal>::Ptr cloud(new pcl::PointCloud<pcl::PointNormal>());
-		if (!Loader::loadCloud(_argv[1], Config::getNormalEstimationRadius(), Config::getCloudSmoothingParams(), cloud))
-			throw std::runtime_error("Can't load cloud at " + workingDir + _argv[1]);
+		if (!Loader::loadCloud(cloudFilename, normalEstimationRadius, smoothingParams, cloud))
+			throw std::runtime_error("Can't load cloud at " + workingDir + cloudFilename);
 		std::cout << "...loaded " << cloud->size() << " points in cloud" << std::endl;
 
 		// Descriptor dense evaluation over the point cloud
 		std::cout << "Starting descriptor dense evaluation" << std::endl;
 		cv::Mat descriptors;
-		if (!Loader::loadDescriptors(Config::getCacheDirectory(), _argv[1], Config::getNormalEstimationRadius(), Config::getDescriptorParams(), Config::getCloudSmoothingParams(), descriptors))
+		if (!Loader::loadDescriptors(cacheLocation, cloudFilename, normalEstimationRadius, descriptorParams, smoothingParams, descriptors))
 		{
 			std::cout << "...cache not found, performing descriptor dense evaluation" << std::endl;
-			Calculator::calculateDescriptors(cloud, Config::getDescriptorParams(), descriptors);
-//			Writer::writeDescriptorsCache(descriptors, params);
+			Calculator::calculateDescriptors(cloud, descriptorParams, descriptors);
+			Writer::writeDescriptorsCache(descriptors, cacheLocation, cloudFilename, normalEstimationRadius, descriptorParams, smoothingParams);
 		}
 
 		std::cout << "Performing data size reduction (clustering)" << std::endl;

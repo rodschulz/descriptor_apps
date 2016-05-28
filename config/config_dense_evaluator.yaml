@@ -20,9 +20,6 @@ descriptor:
 
 ##### clustering params #####
 clustering:
-#     labelData: false
-#     centersLocation: ./input/centers_30_7.dat
-
     implementation: custom # opencv, custom or stochastic
     metric: closest # euclidean, closest or closest_with_confidence
     clusterNumber: 20
