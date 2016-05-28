@@ -22,14 +22,12 @@ clustering:
 #     centersLocation: ./input/centers_30_7.dat
 
     implementation: custom # opencv, custom or stochastic
-    metric: closest # closest or euclidean
-    clusterNumber: 4
+    metric: closest # euclidean, closest or closest_with_confidence
+    clusterNumber: 20
     maxIterations: 300
     stopThreshold: 0.000001
     attempts: 3
     cacheLocation: ../cache/
-    useConfidence: false # use confidence when the metric allows it
-
     generateElbowCurve: false
     generateDistanceMatrix: false
 
@@ -46,6 +44,6 @@ syntheticCloud:
 
 ##### metric testing params #####
 metricTesting:
-    metric: closest # closest or euclidean
-    args: 4 false # arguments passed to the metric
+    metric: closest # euclidean, closest or closest_with_confidence
+    args: 4 # arguments passed to the metric
 ...

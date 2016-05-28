@@ -40,60 +40,36 @@ int main(int _argn, char **_argv)
 			std::cout << (std::string) "WARNING: can't clean output directory: " + workingDir + OUTPUT_FOLDER << std::endl;
 
 		// Load the configuration file
-		std::cout << "Loading configuration file\n";
+		std::cout << "Loading configuration" << std::endl;
 		if (!Config::load(CONFIG_LOCATION))
 			throw std::runtime_error((std::string) "Error reading config at " + workingDir + CONFIG_LOCATION);
 
 		// Load point cloud
-		std::cout << "Loading point cloud\n";
+		std::cout << "Loading point cloud at " << _argv[1] << std::endl;
 		pcl::PointCloud<pcl::PointNormal>::Ptr cloud(new pcl::PointCloud<pcl::PointNormal>());
 		if (!Loader::loadCloud(_argv[1], Config::getNormalEstimationRadius(), Config::getCloudSmoothingParams(), cloud))
 			throw std::runtime_error("Can't load cloud at " + workingDir + _argv[1]);
-		std::cout << "Loaded " << cloud->size() << " points in cloud\n";
+		std::cout << "...loaded " << cloud->size() << " points in cloud" << std::endl;
 
-		// Select execution type
-//		if (params.executionType == EXECUTION_DESCRIPTOR)
-//		{
-//			std::cout << "...Execution for descriptor calculation\n";
-//
-//			std::cout << "Target point: " << params.targetPoint << "\n";
-//			Descriptor descriptor = Calculator::calculateDescriptor(cloud, params);
-//
-//			// Calculate histograms
-//			std::cout << "Generating histograms\n";
-//			std::vector<Hist> histograms = Calculator::generateAngleHistograms(descriptor, params.useProjection);
-//
-//			// Write output
-//			std::cout << "Writing output\n";
-//			Writer::writeOuputData(cloud, descriptor, histograms, params);
-//		}
-//		else if (params.executionType == EXECUTION_CLUSTERING)
-//		{
-		std::cout << "...starting descriptor dense evaluation" << std::endl;
-
+		// Descriptor dense evaluation over the point cloud
+		std::cout << "Starting descriptor dense evaluation" << std::endl;
 		cv::Mat descriptors;
-//			if (!Loader::loadDescriptors(descriptors, params))
-//			{
-
-
-
-		std::cout << "Cache not found, calculating descriptors\n";
-//		Calculator::calculateDescriptors(cloud, params, descriptors);
+//		if (!Loader::loadDescriptors(descriptors, params))
+//		{
+//			std::cout << "...Cache not found, calculating descriptors\n";
+		Calculator::calculateDescriptors(cloud, Config::getDescriptorParams(), descriptors);
 //		Writer::writeDescriptorsCache(descriptors, params);
 
+//		}
 
-
-
-//			}
-
-//			ClusteringResults results;
-//			MetricPtr metric = MetricFactory::createMetric(params.metric, params.getSequenceLength(), params.useConfidence);
+		std::cout << "Performing data size reduction (clustering)" << std::endl;
+		ClusteringResults results;
+		MetricPtr metric = MetricFactory::createMetric(params.metric, params.getSequenceLength(), params.useConfidence);
 //			if (!params.labelData)
 //			{
-//				Clustering::searchClusters(descriptors, params, results);
-//
-//				std::cout << "Generating SSE plot" << std::endl;
-//				Writer::writePlotSSE("sse", "SSE Evolution", results.errorEvolution);
+				Clustering::searchClusters(descriptors, Config::getClusteringParams(), metric, results);
+				std::cout << "Generating SSE plot" << std::endl;
+				Writer::writePlotSSE("sse", "SSE Evolution", results.errorEvolution);
 //			}
 //			else
 //			{
