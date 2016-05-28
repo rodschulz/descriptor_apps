@@ -4,21 +4,15 @@
  */
 #include <stdlib.h>
 #include <iostream>
+#include <iomanip>
 #include <string>
-#include <unistd.h>
 #include <opencv2/core/core.hpp>
-#include <pcl/io/pcd_io.h>
-#include "Clustering.hpp"
-#include "KMeans.hpp"
-#include "MetricFactory.hpp"
-#include "Calculator.hpp"
-#include "Extractor.hpp"
-#include "Hist.hpp"
-#include "CloudFactory.hpp"
-#include "Loader.hpp"
-#include "Writer.hpp"
 #include "Config.hpp"
-#include "CloudUtils.hpp"
+#include "Loader.hpp"
+#include "Calculator.hpp"
+#include "Writer.hpp"
+#include "MetricFactory.hpp"
+#include "Clustering.hpp"
 
 #define CONFIG_LOCATION "config/config_dense_evaluator.yaml"
 
@@ -33,7 +27,7 @@ int main(int _argn, char **_argv)
 	{
 		// Check if enough arguments were given
 		if (_argn < 2)
-			throw std::runtime_error("Not enough exec params given\nUsage: Descriptor <input_file>");
+			throw std::runtime_error("Not enough exec params given\nUsage: DenseEvaluator <input_cloud_file>");
 
 		// Clean the output directory
 		if (system("rm -rf " OUTPUT_FOLDER "*") != 0)
@@ -54,22 +48,21 @@ int main(int _argn, char **_argv)
 		// Descriptor dense evaluation over the point cloud
 		std::cout << "Starting descriptor dense evaluation" << std::endl;
 		cv::Mat descriptors;
-//		if (!Loader::loadDescriptors(descriptors, params))
-//		{
-//			std::cout << "...Cache not found, calculating descriptors\n";
-		Calculator::calculateDescriptors(cloud, Config::getDescriptorParams(), descriptors);
-//		Writer::writeDescriptorsCache(descriptors, params);
-
-//		}
+		if (!Loader::loadDescriptors(Config::getCacheDirectory(), _argv[1], Config::getNormalEstimationRadius(), Config::getDescriptorParams(), Config::getCloudSmoothingParams(), descriptors))
+		{
+			std::cout << "...cache not found, performing descriptor dense evaluation" << std::endl;
+			Calculator::calculateDescriptors(cloud, Config::getDescriptorParams(), descriptors);
+//			Writer::writeDescriptorsCache(descriptors, params);
+		}
 
 		std::cout << "Performing data size reduction (clustering)" << std::endl;
 		ClusteringResults results;
-		MetricPtr metric = MetricFactory::createMetric(params.metric, params.getSequenceLength(), params.useConfidence);
+		MetricPtr metric; // = MetricFactory::createMetric(params.metric, params.getSequenceLength(), params.useConfidence); //TODO fix this to use an actuall metric
 //			if (!params.labelData)
 //			{
-				Clustering::searchClusters(descriptors, Config::getClusteringParams(), metric, results);
-				std::cout << "Generating SSE plot" << std::endl;
-				Writer::writePlotSSE("sse", "SSE Evolution", results.errorEvolution);
+		Clustering::searchClusters(descriptors, Config::getClusteringParams(), metric, results);
+		std::cout << "Generating SSE plot" << std::endl;
+		Writer::writePlotSSE("sse", "SSE Evolution", results.errorEvolution);
 //			}
 //			else
 //			{
@@ -100,7 +93,7 @@ int main(int _argn, char **_argv)
 
 	clock_t end = clock();
 	double elapsedTime = double(end - begin) / CLOCKS_PER_SEC;
-
 	std::cout << std::fixed << std::setprecision(3) << "Finished in " << elapsedTime << " [s]\n";
+
 	return EXIT_SUCCESS;
 }

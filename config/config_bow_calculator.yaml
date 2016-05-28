@@ -1,12 +1,6 @@
 ---
 # flag to enable/disable the debug generation
 debug: false
-# Target point
-targetPoint: 4185
-# radius used for the normal vectors estimation
-normalEstimationRadius: -1
-# calculation cache directory
-cacheLocation: ../cache/
 
 ##### descriptor calculation params #####
 descriptor:
@@ -29,6 +23,7 @@ clustering:
     maxIterations: 300
     stopThreshold: 0.000001
     attempts: 3
+    cacheLocation: ../cache/
     generateElbowCurve: false
     generateDistanceMatrix: false
 
