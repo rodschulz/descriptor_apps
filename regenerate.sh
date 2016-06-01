@@ -13,13 +13,13 @@ fi
 echo "Generating new build folder"
 mkdir $folder
 
-# Generate with cmake
+# Configure with cmake
 cd $folder
 if [ "$type" == "-r" ] ; then
-	echo "Generating project for release"
+	echo "Configuring project for RELEASE"
 	cmake -G "Eclipse CDT4 - Unix Makefiles" -DCMAKE_BUILD_TYPE=Release ../src/
 else
-	echo "Generating project for debug"
+	echo "Configuring project for DEBUG"
 	cmake -G "Eclipse CDT4 - Unix Makefiles" -DCMAKE_BUILD_TYPE=Debug ../src/
 fi
 cd ..

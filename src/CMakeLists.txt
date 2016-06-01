@@ -22,7 +22,7 @@ set(CMAKE_PREFIX_PATH "/opt/ros/hydro/" ${CMAKE_PREFIX_PATH})
 find_package(PCL 1.7 REQUIRED)
 find_package(OpenCV 2.4.8 REQUIRED)
 find_package(yaml-cpp 0.5.2 REQUIRED)
-find_package(Boost 1.46 REQUIRED)
+find_package(Boost 1.46 COMPONENTS unit_test_framework REQUIRED)
 # find_package(OpenMP REQUIRED)
 
 # Print information related to libraries
@@ -84,6 +84,12 @@ set(APPS_LINKING_DEPENDENCIES
 	${PCL_LIBRARIES}
 	${YAML_CPP_LIBRARIES}
 	${OpenCV_LIBS})
+
+# Target Test
+file(GLOB TEST_SRC "Test.cpp" "descriptor_lib/test/*.cpp")
+add_executable(Test ${TEST_SRC})
+set_target_properties(Test PROPERTIES COMPILE_DEFINITIONS "BOOST_TEST_DYN_LINK")
+target_link_libraries(Test ${APPS_LINKING_DEPENDENCIES} ${Boost_UNIT_TEST_FRAMEWORK_LIBRARY})
 
 # Target Descriptor 
 file(GLOB DESCRIPTOR_SRC "Descriptor.cpp")
