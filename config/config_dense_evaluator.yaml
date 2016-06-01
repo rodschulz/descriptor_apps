@@ -21,7 +21,7 @@ descriptor:
 ##### clustering params #####
 clustering:
     implementation: custom # opencv, custom or stochastic
-    metric: closest # euclidean, closest or closest_with_confidence
+    metric: [closest, conf] # metric and args (euclidean, closest or closest_with_confidence)
     clusterNumber: 20
     maxIterations: 300
     stopThreshold: 0.000001
@@ -42,6 +42,5 @@ syntheticCloud:
 
 ##### metric testing params #####
 metricTesting:
-    metric: closest # euclidean, closest or closest_with_confidence
-    args: 4 # arguments passed to the metric
+    metric: [closest, conf] # metric and args (euclidean, closest or closest_with_confidence)
 ...
