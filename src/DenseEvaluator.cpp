@@ -43,6 +43,7 @@ int main(int _argn, char **_argv)
 		double normalEstimationRadius = Config::getNormalEstimationRadius();
 		std::string cacheLocation = Config::getCacheDirectory();
 		DescriptorParams descriptorParams = Config::getDescriptorParams();
+		ClusteringParams clusteringParams = Config::getClusteringParams();
 		CloudSmoothingParams smoothingParams = Config::getCloudSmoothingParams();
 
 		// Load point cloud
@@ -64,34 +65,20 @@ int main(int _argn, char **_argv)
 
 		std::cout << "Performing data size reduction (clustering)" << std::endl;
 		ClusteringResults results;
-		MetricPtr metric; // = MetricFactory::createMetric(params.metric, params.getSequenceLength(), params.useConfidence); //TODO fix this to use an actuall metric
-//			if (!params.labelData)
-//			{
-		Clustering::searchClusters(descriptors, Config::getClusteringParams(), metric, results);
+		Clustering::searchClusters(descriptors, Config::getClusteringParams(), results);
+
 		std::cout << "Generating SSE plot" << std::endl;
 		Writer::writePlotSSE("sse", "SSE Evolution", results.errorEvolution);
-//			}
-//			else
-//			{
-//				std::cout << "Loading centers" << std::endl;
-//
-//				if (!Loader::loadCenters(params.centersLocation, results.centers))
-//					throw std::runtime_error("Can't load clusters centers");
-//
-//				Clustering::labelData(descriptors, results.centers, params, results.labels);
-//			}
 
-// Generate outputs
-//			std::cout << "Writing outputs" << std::endl;
-//			pcl::io::savePCDFileASCII("./output/visualization.pcd", *Clustering::generateClusterRepresentation(cloud, results.labels, results.centers, params));
-//			Writer::writeClusteredCloud("./output/clusters.pcd", cloud, results.labels);
-//			Writer::writeClustersCenters("./output/", results.centers);
-//
-//			if (params.genDistanceMatrix)
-//				Writer::writeDistanceMatrix("./output/", descriptors, results.centers, results.labels, metric);
-//			if (params.genElbowCurve)
-//				Clustering::generateElbowGraph(descriptors, params);
-//		}
+		// Generate outputs
+		std::cout << "Writing reduced data" << std::endl;
+		Writer::writeClustersCenters("./output/", results.centers);
+
+		if (clusteringParams.generateDistanceMatrix)
+			Writer::writeDistanceMatrix("./output/", descriptors, results.centers, results.labels, clusteringParams.metric);
+
+		if (clusteringParams.generateElbowCurve)
+			Clustering::generateElbowGraph(descriptors, clusteringParams);
 	}
 	catch (std::exception &_ex)
 	{

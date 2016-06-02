@@ -1,8 +1,6 @@
 ---
 # flag to enable/disable the debug generation
 debug: false
-# Target point
-targetPoint: 4185
 # radius used for the normal vectors estimation
 normalEstimationRadius: -1
 # calculation cache directory
@@ -34,13 +32,4 @@ cloudSmoothing:
     useSmoothing: true
     sigma: 4
     radius: 0.005
-
-##### synthetic cloud generation params #####
-syntheticCloud:
-    generateCloud: false
-    type: half_sphere # cube, cylinder, sphere, half_sphere, plane
-
-##### metric testing params #####
-metricTesting:
-    metric: [closest, conf] # metric and args (euclidean, closest or closest_with_confidence)
 ...
