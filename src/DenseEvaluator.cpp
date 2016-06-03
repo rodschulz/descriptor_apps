@@ -67,15 +67,12 @@ int main(int _argn, char **_argv)
 		ClusteringResults results;
 		Clustering::searchClusters(descriptors, Config::getClusteringParams(), results);
 
-		std::cout << "Generating SSE plot" << std::endl;
-		Writer::writePlotSSE("sse", "SSE Evolution", results.errorEvolution);
-
 		// Generate outputs
 		std::cout << "Writing reduced data" << std::endl;
-		Writer::writeClustersCenters("./output/", results.centers);
+		Writer::writeClustersCenters(OUTPUT_FOLDER "centers.dat", results.centers, descriptorParams, clusteringParams, smoothingParams);
 
 		if (clusteringParams.generateDistanceMatrix)
-			Writer::writeDistanceMatrix("./output/", descriptors, results.centers, results.labels, clusteringParams.metric);
+			Writer::writeDistanceMatrix(OUTPUT_FOLDER, descriptors, results.centers, results.labels, clusteringParams.metric);
 
 		if (clusteringParams.generateElbowCurve)
 			Clustering::generateElbowGraph(descriptors, clusteringParams);
