@@ -11,7 +11,6 @@
 #include "Loader.hpp"
 #include "Calculator.hpp"
 #include "Writer.hpp"
-#include "MetricFactory.hpp"
 #include "Clustering.hpp"
 
 #define CONFIG_LOCATION "config/config_dense_evaluator.yaml"

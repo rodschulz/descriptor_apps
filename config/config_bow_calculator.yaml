@@ -2,44 +2,14 @@
 # flag to enable/disable the debug generation
 debug: false
 
-##### descriptor calculation params #####
-descriptor:
-    patchSize: 0.02
-    bandNumber: 8
-    bandWidth: 0.005
-    bidirectional: false
-    useProjection: false
-    sequenceBin: 0.005
-    sequenceStat: mean # mean or median
-
 ##### clustering params #####
 clustering:
-#     labelData: false
-#     centersLocation: ./input/centers_30_7.dat
-
     implementation: custom # opencv, custom or stochastic
-    metric: closest # euclidean, closest or closest_with_confidence
-    clusterNumber: 20
+    metric: [closest, 4] # metric and args (euclidean, closest or closest_with_confidence)
+    clusterNumber: 7
     maxIterations: 300
-    stopThreshold: 0.000001
+    stopThreshold: 0.0001
     attempts: 3
-    cacheLocation: ../cache/
     generateElbowCurve: false
     generateDistanceMatrix: false
-
-##### cloud smoothing params #####
-cloudSmoothing:
-    useSmoothing: true
-    sigma: 4
-    radius: 0.005
-
-##### synthetic cloud generation params #####
-syntheticCloud:
-    generateCloud: false
-    type: half_sphere # cube, cylinder, sphere, half_sphere, plane
-
-##### metric testing params #####
-metricTesting:
-    metric: closest # euclidean, closest or closest_with_confidence
-    args: 4 # arguments passed to the metric
 ...
