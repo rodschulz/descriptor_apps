@@ -30,6 +30,10 @@ int main(int _argn, char **_argv)
 			throw std::runtime_error("Not enough exec params given\nUsage: DenseEvaluator <input_cloud_file>");
 		std::string cloudFilename = _argv[1];
 
+		// Create the output folder in case it doesn't exists
+		if (system("mkdir -p " OUTPUT_FOLDER) != 0)
+			throw std::runtime_error("can't create the output folder: " + workingDir + OUTPUT_FOLDER);
+
 		// Clean the output directory
 		if (system("rm -rf " OUTPUT_FOLDER "*") != 0)
 			std::cout << (std::string) "WARNING: can't clean output directory: " + workingDir + OUTPUT_FOLDER << std::endl;
