@@ -1,61 +1,46 @@
 ---
 # flag to enable/disable the debug generation
 debug: false
+# Target point
+targetPoint: 4185
+# radius used for the normal vectors estimation
+normalEstimationRadius: -1
+# calculation cache directory
+cacheLocation: ../cache/
 
-# execution type (descriptor, clustering or metric)
-executionType: clustering
-
-##### execution types #####
-# descriptor calculation execution params 
+##### descriptor calculation params #####
 descriptor:
-    targetPoint: 4185
-
     patchSize: 0.02
-    normalRadius: -1
     bandNumber: 8
     bandWidth: 0.005
     bidirectional: false
     useProjection: false
-
     sequenceBin: 0.005
     sequenceStat: mean # mean or median
 
-# clustering execution params
+##### clustering params #####
 clustering:
-    generateElbowCurve: false
-    generateDistanceMatrix: false
-
-    labelData: false
-    centersLocation: ./input/centers_30_7.dat
-
-    # params used only when no labeling is done
     implementation: custom # opencv, custom or stochastic
-    metric: closest # closest or euclidean
-    clusters: 4
+    metric: [closest, conf] # metric and args (euclidean, closest or closest_with_confidence)
+    clusterNumber: 20
     maxIterations: 300
     stopThreshold: 0.000001
     attempts: 3
-    cacheLocation: ../cache/
-    useConfidence: false # use confidence when the metric allows it
-
-# metric testcase evaluation params
-metric:
-    targetMetric: closest # closest or euclidean
-    metricArgs: 4 false # arguments passed to the metric
+    generateElbowCurve: false
+    generateDistanceMatrix: false
 
 ##### cloud smoothing params #####
 cloudSmoothing:
-    type: gaussian # gaussian or mls
+    useSmoothing: true
+    sigma: 4
+    radius: 0.005
 
-    gaussian:
-        sigma: 4
-        radius: 0.005
-
-    mls:
-        radius: 0.05
-
-##### Synthetic cloud generation params #####
-syntheticClouds:
+##### synthetic cloud generation params #####
+syntheticCloud:
     generateCloud: false
     type: half_sphere # cube, cylinder, sphere, half_sphere, plane
+
+##### metric testing params #####
+metricTesting:
+    metric: [closest, conf] # metric and args (euclidean, closest or closest_with_confidence)
 ...
