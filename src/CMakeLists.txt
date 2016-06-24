@@ -3,6 +3,9 @@ cmake_minimum_required(VERSION 2.8 FATAL_ERROR)
 # Project's name
 project(DescriptorApps)
 
+# Enable or disable the use of OpenMP
+set(useOpenMP FALSE)
+
 # Colors defined for messages
 if(NOT WIN32)
 	string(ASCII 27 Esc)
@@ -23,7 +26,6 @@ find_package(PCL 1.7 REQUIRED)
 find_package(OpenCV 2.4.8 REQUIRED)
 find_package(yaml-cpp 0.5.2 REQUIRED)
 find_package(Boost 1.46 COMPONENTS unit_test_framework REQUIRED)
-# find_package(OpenMP REQUIRED)
 
 # Print information related to libraries
 message(STATUS "${Yellow}PCL found version ${PCL_VERSION}${ColorReset}")
@@ -50,10 +52,6 @@ link_directories(${Boost_LIBRARY_DIRS})
 
 # Set the build type for PCL
 set(PCL_BUILD_TYPE Release)
-
-# Set OpenMP flags to be used
-# set (CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${OpenMP_C_FLAGS}")
-# set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${OpenMP_CXX_FLAGS}")
 
 # Add extra required definitions
 add_definitions(${PCL_DEFINITIONS})
@@ -109,4 +107,4 @@ target_link_libraries(BoWCalculator ${APPS_LINKING_DEPENDENCIES})
 # get_cmake_property(_variableNames VARIABLES)
 # foreach (_variableName ${_variableNames})
 #     message(STATUS "${_variableName}=${${_variableName}}")
-# endforeach()
+# endforeach() 
