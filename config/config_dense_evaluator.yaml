@@ -22,7 +22,7 @@ clustering:
     metric: [closest, conf] # metric and args (euclidean, closest or closest_with_confidence)
     clusterNumber: 20
     maxIterations: 300
-    stopThreshold: 0.000001
+    stopThreshold: 0.0001
     attempts: 3
     generateElbowCurve: false
     generateDistanceMatrix: false
