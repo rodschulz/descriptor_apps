@@ -7,11 +7,8 @@
 #include <iomanip>
 #include <string>
 #include <opencv2/core/core.hpp>
-#include <boost/filesystem.hpp>
-#include <boost/foreach.hpp>
 #include "Clustering.hpp"
 #include "Config.hpp"
-#include "Utils.hpp"
 #include "Loader.hpp"
 #include "Writer.hpp"
 
@@ -28,7 +25,7 @@ int main(int _argn, char **_argv)
 	{
 		// Check if enough arguments were given
 		if (_argn < 2)
-			throw std::runtime_error("Not enough exec params given\nUsage: DenseEvaluator <input_cloud_file>");
+			throw std::runtime_error("Not enough exec params given\nUsage: BoWCalculator <input_directory>");
 		std::string inputDirectory = _argv[1];
 
 		// Create the output folder in case it doesn't exists
