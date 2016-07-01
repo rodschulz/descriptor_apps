@@ -104,6 +104,11 @@ file(GLOB BOW_CALCULATOR_SRC "BoWCalculator.cpp")
 add_executable(BoWCalculator ${BOW_CALCULATOR_SRC})
 target_link_libraries(BoWCalculator ${APPS_LINKING_DEPENDENCIES})
 
+# Target BoWCalculator 
+file(GLOB CLOUD_LABELER_SRC "CloudLabeler.cpp")
+add_executable(CloudLabeler ${CLOUD_LABELER_SRC})
+target_link_libraries(CloudLabeler ${APPS_LINKING_DEPENDENCIES})
+
 # get_cmake_property(_variableNames VARIABLES)
 # foreach (_variableName ${_variableNames})
 #     message(STATUS "${_variableName}=${${_variableName}}")
