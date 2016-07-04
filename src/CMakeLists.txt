@@ -77,7 +77,6 @@ set(APPS_LINKING_DEPENDENCIES
 	descriptor
 	factories
 	io
-	metrics
 	utils
 	${PCL_LIBRARIES}
 	${YAML_CPP_LIBRARIES}
