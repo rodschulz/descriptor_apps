@@ -66,6 +66,37 @@ int main(int _argn, char **_argv)
 			Writer::writeDescriptorsCache(descriptors, cacheLocation, cloudFilename, normalEstimationRadius, descriptorParams, smoothingParams);
 		}
 
+		/******/
+//		int n = 10;
+//		int k = n / 3;
+//		descriptors = cv::Mat::zeros(n, 2, CV_32FC1);
+//		float x = 0;
+//		float y = 0;
+//		float delta = 0.01;
+//		for (int i = 0; i < descriptors.rows; i++)
+//		{
+//			if (i % k == 0)
+//			{
+//				x = 0;
+//				y += delta;
+//			}
+//
+//			descriptors.at<float>(i, 0) = x;
+//			descriptors.at<float>(i, 1) = y;
+//			x += delta;
+//		}
+
+//		int n = 40;
+//		std::vector<int> x = Utils::getRandomArray(n, -25, 25);
+//		std::vector<int> y = Utils::getRandomArray(n, -25, 25);
+//		descriptors = cv::Mat::zeros(n, 2, CV_32FC1);
+//		for (int i = 0; i < n; i++)
+//		{
+//			descriptors.at<float>(i, 0) = x[i];
+//			descriptors.at<float>(i, 1) = y[i];
+//		}
+		/******/
+
 		std::cout << "Performing data size reduction (clustering)" << std::endl;
 		ClusteringResults results;
 		Clustering::searchClusters(descriptors, Config::getClusteringParams(), results);
