@@ -86,9 +86,10 @@ int main(int _argn, char **_argv)
 //			x += delta;
 //		}
 
-//		int n = 40;
-//		std::vector<int> x = Utils::getRandomArray(n, -25, 25);
-//		std::vector<int> y = Utils::getRandomArray(n, -25, 25);
+//		int n = 500;
+//		float w = 30;
+//		std::vector<float> x = Utils::getRandomRealArray(n, -w, w, false);
+//		std::vector<float> y = Utils::getRandomRealArray(n, -w, w, false);
 //		descriptors = cv::Mat::zeros(n, 2, CV_32FC1);
 //		for (int i = 0; i < n; i++)
 //		{
