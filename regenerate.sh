@@ -31,6 +31,9 @@ fi
 if [ ! -d "./output" ]; then
 	mkdir ./output/
 fi
+if [ ! -d "./debug" ]; then
+	mkdir ./debug/
+fi
 
 # Make 
 ./make.sh

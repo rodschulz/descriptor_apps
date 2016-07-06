@@ -1,6 +1,7 @@
 build/*
 cache/*
 input/*
+debug/*
 output/*
 .settings/*
 .cproject
