@@ -6,14 +6,25 @@ normalEstimationRadius: -1
 # calculation cache directory
 cacheLocation: ../cache/
 
+##### kmeans class debug params #####
+kmeans:
+  debugAlgorith: false
+  debugMetric: false
+  centerTitles: false
+  dataTitles: false
+  identityTitle: false
+  displayFactor: 1
+  display: centroid # centroid or center
+
 ##### descriptor calculation params #####
 descriptor:
     patchSize: 0.02
-    bandNumber: 8
+    # bandNumber: 8
+    bandNumber: 2
     bandWidth: 0.005
     bidirectional: false
     useProjection: false
-    sequenceBin: 0.005
+    sequenceBin: 0.02
     sequenceStat: mean # mean or median
 
 ##### clustering params #####
@@ -21,9 +32,9 @@ clustering:
     implementation: custom # opencv, custom or stochastic
     metric: [closest, conf] # metric and args (euclidean, closest or closest_with_confidence)
     clusterNumber: 20
-    maxIterations: 300
+    maxIterations: 1
     stopThreshold: 0.0001
-    attempts: 3
+    attempts: 1
     generateElbowCurve: false
     generateDistanceMatrix: false
 

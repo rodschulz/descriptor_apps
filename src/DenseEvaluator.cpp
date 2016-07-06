@@ -30,12 +30,14 @@ int main(int _argn, char **_argv)
 		std::string cloudFilename = _argv[1];
 
 		// Create the output folder in case it doesn't exists
-		if (system("mkdir -p " OUTPUT_FOLDER) != 0)
-			throw std::runtime_error("can't create the output folder: " + workingDir + OUTPUT_FOLDER);
+		if (system("mkdir -p " OUTPUT_DIR) != 0)
+			throw std::runtime_error("can't create the output folder: " + workingDir + OUTPUT_DIR);
 
-		// Clean the output directory
-		if (system("rm -rf " OUTPUT_FOLDER "*") != 0)
-			std::cout << (std::string) "WARNING: can't clean output directory: " + workingDir + OUTPUT_FOLDER << std::endl;
+		// Clean output and debug directory
+		if (system("rm -rf " OUTPUT_DIR "*") != 0)
+			std::cout << (std::string) "WARNING: can't clean output directory: " + workingDir + OUTPUT_DIR << std::endl;
+		if (system("rm -rf " DEBUG_DIR "*") != 0)
+			std::cout << (std::string) "WARNING: can't clean debug directory: " + workingDir + DEBUG_DIR << std::endl;
 
 		// Load the configuration file
 		std::cout << "Loading configuration" << std::endl;
@@ -85,7 +87,6 @@ int main(int _argn, char **_argv)
 //			descriptors.at<float>(i, 1) = y;
 //			x += delta;
 //		}
-
 //		int n = 500;
 //		float w = 30;
 //		std::vector<float> x = Utils::getRandomRealArray(n, -w, w, false);
@@ -104,10 +105,10 @@ int main(int _argn, char **_argv)
 
 		// Generate outputs
 		std::cout << "Writing reduced data" << std::endl;
-		Writer::writeClustersCenters(OUTPUT_FOLDER "centers.dat", results.centers, descriptorParams, clusteringParams, smoothingParams);
+		Writer::writeClustersCenters(OUTPUT_DIR "centers.dat", results.centers, descriptorParams, clusteringParams, smoothingParams);
 
 		if (clusteringParams.generateDistanceMatrix)
-			Writer::writeDistanceMatrix(OUTPUT_FOLDER, descriptors, results.centers, results.labels, clusteringParams.metric);
+			Writer::writeDistanceMatrix(OUTPUT_DIR, descriptors, results.centers, results.labels, clusteringParams.metric);
 
 		if (clusteringParams.generateElbowCurve)
 			Clustering::generateElbowGraph(descriptors, clusteringParams);

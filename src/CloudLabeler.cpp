@@ -34,12 +34,12 @@ int main(int _argn, char **_argv)
 		std::string cloudFilename = _argv[1];
 
 		// Create the output folder in case it doesn't exists
-		if (system("mkdir -p " OUTPUT_FOLDER) != 0)
-			throw std::runtime_error("can't create the output folder: " + workingDir + OUTPUT_FOLDER);
+		if (system("mkdir -p " OUTPUT_DIR) != 0)
+			throw std::runtime_error("can't create the output folder: " + workingDir + OUTPUT_DIR);
 
 		// Clean the output directory
-		if (system("rm -rf " OUTPUT_FOLDER "*") != 0)
-			std::cout << (std::string) "WARNING: can't clean output directory: " + workingDir + OUTPUT_FOLDER << std::endl;
+		if (system("rm -rf " OUTPUT_DIR "*") != 0)
+			std::cout << (std::string) "WARNING: can't clean output directory: " + workingDir + OUTPUT_DIR << std::endl;
 
 		// Load the configuration file
 		std::cout << "Loading configuration" << std::endl;
@@ -93,7 +93,7 @@ int main(int _argn, char **_argv)
 
 		// Write the labeled cloud
 		std::cout << "Writing labeled cloud" << std::endl;
-		Writer::writeClusteredCloud(OUTPUT_FOLDER "cloud" CLOUD_FILE_EXTENSION, cloud, labels);
+		Writer::writeClusteredCloud(OUTPUT_DIR "cloud" CLOUD_FILE_EXTENSION, cloud, labels);
 	}
 	catch (std::exception &_ex)
 	{
