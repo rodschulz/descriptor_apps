@@ -68,12 +68,14 @@ int main(int _argn, char **_argv)
 			Calculator::calculateDescriptors(cloud, descriptorParams, descriptors);
 			Writer::writeDescriptorsCache(descriptors, cacheLocation, cloudFilename, normalEstimationRadius, descriptorParams, smoothingParams);
 		}
+		std::cout << "...done" << std::endl;
 
 		// Read data from files
 		std::cout << "Loading centers for labeling" << std::endl;
 		cv::Mat centers;
 		std::map<std::string, std::string> metadata;
-		Loader::loadMatrix(Config::get()["centersLocation"].as<std::string>(), centers, &metadata);
+		if (!Loader::loadMatrix(Config::get()["centersLocation"].as<std::string>(), centers, &metadata))
+			throw std::runtime_error("Unable to load centers file at " + workingDir + Config::get()["centersLocation"].as<std::string>());
 
 		// Perform the labeling
 		cv::Mat labels;
