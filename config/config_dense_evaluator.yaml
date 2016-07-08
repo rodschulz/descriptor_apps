@@ -8,7 +8,7 @@ cacheLocation: ../cache/
 
 ##### kmeans class debug params #####
 kmeans:
-  debugAlgorith: true
+  debugAlgorith: false
   debugMetric: false
   centerTitles: false
   dataTitles: false
