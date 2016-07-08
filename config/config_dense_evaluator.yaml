@@ -13,7 +13,7 @@ kmeans:
   centerTitles: false
   dataTitles: false
   identityTitle: false
-  displayFactor: 0.1
+  displayFactor: 0.2
   display: centroid # centroid or center
 
 ##### descriptor calculation params #####
@@ -28,7 +28,7 @@ descriptor:
 
 ##### clustering params #####
 clustering:
-    implementation: custom # opencv, custom or stochastic
+    implementation: kmeans # opencv, kmeans, kmedoids or stochastic
     metric: [closest, conf] # metric and args (euclidean, closest or closest_with_confidence)
     clusterNumber: 50
     maxIterations: 200
