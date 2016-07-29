@@ -2,9 +2,19 @@
 # flag to enable/disable the debug generation
 debug: false
 
-##### clustering params #####
+##### kmeans class debug params #####
+kmeans:
+    debugAlgorith: false
+    debugMetric: false
+    centerTitles: false
+    dataTitles: false
+    identityTitle: false
+    displayFactor: 0.2
+    display: centroid # centroid or center
+
+    ##### clustering params #####
 clustering:
-    implementation: custom # opencv, custom or stochastic
+    implementation: kmeans # opencv, kmeans, kmedoids or stochastic
     metric: [closest, 4] # metric and args (euclidean, closest or closest_with_confidence)
     clusterNumber: 7
     maxIterations: 300

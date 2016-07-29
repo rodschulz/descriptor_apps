@@ -8,13 +8,13 @@ cacheLocation: ../cache/
 
 ##### kmeans class debug params #####
 kmeans:
-  debugAlgorith: false
-  debugMetric: false
-  centerTitles: false
-  dataTitles: false
-  identityTitle: false
-  displayFactor: 0.2
-  display: centroid # centroid or center
+    debugAlgorithm: false
+    debugMetric: false
+    centerTitles: false
+    dataTitles: false
+    identityTitle: false
+    displayFactor: 0.2
+    display: centroid # centroid or center
 
 ##### descriptor calculation params #####
 descriptor:
