@@ -1,12 +1,14 @@
 /**
  * Author: rodrigo
- * 2016     
+ * 2016
  */
 #include <stdlib.h>
 #include <iostream>
 #include <iomanip>
 #include <string>
 #include <opencv2/core/core.hpp>
+#include <boost/lexical_cast.hpp>
+#include <boost/algorithm/string.hpp>
 #include "Clustering.hpp"
 #include "Config.hpp"
 #include "Loader.hpp"
@@ -44,8 +46,36 @@ int main(int _argn, char **_argv)
 		// Read data from files
 		std::cout << "Loading data from files" << std::endl;
 		std::pair<int, int> dimensions(0, 0);
-		std::vector<cv::Mat> centers;
+		std::vector<std::pair<cv::Mat, std::map<std::string, std::string> > > centers;
 		Loader::traverseDirectory(inputDirectory, centers, dimensions);
+
+		// Check if centers are ok to combine
+		std::cout << "Checking consistency" << std::endl;
+		int nbands = -1;
+		int nbins = -1;
+		bool bidirectional = false;
+		for (size_t i = 0; i < centers.size(); i++)
+		{
+			int auxBands = boost::lexical_cast<int>(centers[i].second["bandNumber"]);
+			int auxBins = (int)(boost::lexical_cast<float>(centers[i].second["patchSize"]) / boost::lexical_cast<float>(centers[i].second["sequenceBin"]));
+			bool auxBidir = boost::iequals(centers[i].second["bidirectional"], "true");
+
+			if (i == 0)
+			{
+				nbands = auxBands;
+				nbins = auxBins;
+				bidirectional = auxBidir;
+			}
+			else
+			{
+				if (nbands != auxBands)
+					std::cout << "WARNING: mixing number of bands (" << nbands << " != " << auxBands << ")" << std::endl;
+				if (nbins != auxBins)
+					std::cout << "WARNING: mixing bins (" << nbins << " != " << auxBins << ")" << std::endl;
+				if (bidirectional != auxBidir)
+					std::cout << "WARNING: mixing bidirectional and no bidirectional bands" << std::endl;
+			}
+		}
 
 		// Merge all the centers in one matrix
 		std::cout << "Groupping data" << std::endl;
@@ -53,8 +83,8 @@ int main(int _argn, char **_argv)
 		int currentRow = 0;
 		for (size_t i = 0; i < centers.size(); i++)
 		{
-			centers[i].copyTo(data.rowRange(currentRow, currentRow + centers[i].rows));
-			currentRow += centers[i].rows;
+			centers[i].first.copyTo(data.rowRange(currentRow, currentRow + centers[i].first.rows));
+			currentRow += centers[i].first.rows;
 		}
 
 		// Calculate the BoW from the loaded centers
@@ -64,7 +94,7 @@ int main(int _argn, char **_argv)
 
 		// Write the BoW to disk
 		std::cout << "Writing BoW" << std::endl;
-		Writer::writeBoW(OUTPUT_DIR "bow.dat", results.centers, Config::getClusteringParams());
+		Writer::writeBoW(OUTPUT_DIR "bow.dat", results.centers, Config::getClusteringParams(), nbands, nbins, bidirectional);
 	}
 	catch (std::exception &_ex)
 	{

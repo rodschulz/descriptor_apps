@@ -2,6 +2,7 @@ build/*
 cache/*
 input/*
 debug/*
+proj/*
 output/*
 .settings/*
 .cproject
