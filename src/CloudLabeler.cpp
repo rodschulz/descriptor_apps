@@ -14,7 +14,6 @@
 #include "MetricFactory.hpp"
 #include "Loader.hpp"
 #include "Writer.hpp"
-#include "ClusteringUtils.hpp"
 #include <pcl/io/pcd_io.h>
 
 

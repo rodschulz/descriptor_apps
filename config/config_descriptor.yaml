@@ -8,16 +8,6 @@ normalEstimationRadius: -1
 # calculation cache directory
 cacheLocation: ../cache/
 
-##### kmeans class debug params #####
-# kmeans:
-#     debugAlgorithm: false
-#     debugMetric: false
-#     centerTitles: false
-#     dataTitles: false
-#     identityTitle: false
-#     displayFactor: 0.2
-#     display: centroid # centroid or center
-
 ##### descriptor calculation params #####
 descriptor:
     patchSize: 0.02
@@ -27,17 +17,6 @@ descriptor:
     useProjection: false
     sequenceBin: 0.005
     sequenceStat: mean # mean or median
-
-##### clustering params #####
-# clustering:
-#     implementation: kmeans # opencv, kmeans, kmedoids or stochastic
-#     metric: [closest, conf] # metric and args (euclidean, closest or closest_with_confidence)
-#     clusterNumber: 50
-#     maxIterations: 200
-#     stopThreshold: 0.0001
-#     attempts: 3
-#     generateElbowCurve: false
-#     generateDistanceMatrix: false
 
 ##### cloud smoothing params #####
 cloudSmoothing:

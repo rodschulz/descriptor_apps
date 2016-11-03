@@ -13,7 +13,9 @@
 #include "Writer.hpp"
 #include "Clustering.hpp"
 
+
 #define CONFIG_LOCATION "config/config_dense_evaluator.yaml"
+
 
 int main(int _argn, char **_argv)
 {
