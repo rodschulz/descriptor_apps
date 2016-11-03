@@ -4,72 +4,123 @@
  */
 #include <stdlib.h>
 #include <iostream>
+#include <iomanip>
 #include <string>
-#include <opencv2/core/core.hpp>
-#include <pcl/io/pcd_io.h>
-#include "Clustering.hpp"
-#include "KMeans.hpp"
-#include "MetricFactory.hpp"
+// #include <opencv2/core/core.hpp>
+// #include <pcl/io/pcd_io.h>
+// #include "Clustering.hpp"
+// #include "KMeans.hpp"
+// #include "MetricFactory.hpp"
 #include "Calculator.hpp"
-#include "Extractor.hpp"
-#include "Hist.hpp"
+// #include "Extractor.hpp"
+// #include "Hist.hpp"
 #include "CloudFactory.hpp"
 #include "Loader.hpp"
-#include "Writer.hpp"
+// #include "Writer.hpp"
 #include "Config.hpp"
-#include "CloudUtils.hpp"
+// #include "CloudUtils.hpp"
+
 
 #define CONFIG_LOCATION "./config/config.yaml"
 
-//bool getPointCloud(pcl::PointCloud<pcl::PointNormal>::Ptr &_cloud, const ExecutionParams &_params)
-//{
-//	if (_params.useSynthetic)
-//	{
-//		std::cout << "Generating synthetic cloud: " << _params.synCloudType << "\n";
-//
-//		switch (_params.synCloudType)
-//		{
-//			case CLOUD_CUBE:
-//				_cloud = CloudFactory::createCube(5, Eigen::Vector3f(0, 0, 0), 20000);
-//				break;
-//
-//			case CLOUD_CYLINDER:
-//				_cloud = CloudFactory::createCylinderSection(2 * M_PI, 5, 10, Eigen::Vector3f(0, 0, 0), 20000);
-//				break;
-//
-//			case CLOUD_SPHERE:
-//				_cloud = CloudFactory::createSphereSection(2 * M_PI, 10, Eigen::Vector3f(0, 0, 0), 20000);
-//				break;
-//
-//			case CLOUD_HALF_SPHERE:
-//				_cloud = CloudFactory::createSphereSection(M_PI, 10, Eigen::Vector3f(0, 0, 0), 20000);
-//				break;
-//
-//			case CLOUD_PLANE:
-//				_cloud = CloudFactory::createHorizontalPlane(-50, 50, 200, 300, 30, 20000);
-//				break;
-//
-//			default:
-//				std::cout << "WARNING, wrong cloud generation parameters\n";
-//				return false;
-//		}
-//
-//		std::cout << "Generated " << _cloud->size() << " points in cloud\n";
-//		return true;
-//	}
-//	else
-//	{
-//		std::cout << "Loading point cloud\n";
-//		bool result = Loader::loadCloud(_cloud, _params);
-//		std::cout << "Loaded " << _cloud->size() << " points in cloud\n";
-//
-//		return result;
-//	}
-//}
+
+void genPointCloud(pcl::PointCloud<pcl::PointNormal>::Ptr &cloud_, const SynCloudType cloudType_)
+{
+	std::cout << "Generating cloud: " << cloudType[cloudType_] << "\n";
+
+	switch (cloudType_)
+	{
+	default:
+		std::cout << "WARNING, wrong synthetic cloud params, assuming cube\n";
+
+	case CLOUD_CUBE:
+		cloud_ = CloudFactory::createCube(5, Eigen::Vector3f(0, 0, 0), 20000);
+		break;
+
+	case CLOUD_CYLINDER:
+		cloud_ = CloudFactory::createCylinderSection(2 * M_PI, 5, 10, Eigen::Vector3f(0, 0, 0), 20000);
+		break;
+
+	case CLOUD_SPHERE:
+		cloud_ = CloudFactory::createSphereSection(2 * M_PI, 10, Eigen::Vector3f(0, 0, 0), 20000);
+		break;
+
+	case CLOUD_HALF_SPHERE:
+		cloud_ = CloudFactory::createSphereSection(M_PI, 10, Eigen::Vector3f(0, 0, 0), 20000);
+		break;
+
+	case CLOUD_PLANE:
+		cloud_ = CloudFactory::createHorizontalPlane(-50, 50, 200, 300, 30, 20000);
+		break;
+	}
+}
+
 
 int main(int _argn, char **_argv)
 {
+	// Get the current exec directory
+	std::string workingDir = Utils::getWorkingDirectory();
+
+	// Start measuring execution time
 	clock_t begin = clock();
+	try
+	{
+		// Create the output folder in case it doesn't exists
+		if (system("mkdir -p " OUTPUT_DIR) != 0)
+			throw std::runtime_error("can't create the output folder: " + workingDir + OUTPUT_DIR);
+
+		// Clean the output directory
+		if (system("rm -rf " OUTPUT_DIR "*") != 0)
+			std::cout << (std::string) "WARNING: can't clean output directory: " + workingDir + OUTPUT_DIR << std::endl;
+
+		// Load the configuration file
+		std::cout << "Loading configuration" << std::endl;
+		if (!Config::load(CONFIG_LOCATION))
+			throw std::runtime_error((std::string) "Error reading config at " + workingDir + CONFIG_LOCATION);
+
+		// Load or generate the cloud
+		pcl::PointCloud<pcl::PointNormal>::Ptr cloud(new pcl::PointCloud<pcl::PointNormal>());
+		SyntheticCloudsParams synCloudParams = Config::getSyntheticCloudParams();
+		if (synCloudParams.useSynthetic)
+			genPointCloud(cloud, synCloudParams.synCloudType);
+		else
+		{
+			// Check if enough params were given
+			if (_argn < 2)
+				throw std::runtime_error("Not enough exec params given\nUsage: Descriptor <input_file>");
+
+			std::string cloudFilename = _argv[1];
+
+			// Retrieve useful parameters
+			double normalEstimationRadius = Config::getNormalEstimationRadius();
+			CloudSmoothingParams smoothingParams = Config::getCloudSmoothingParams();
+
+			// Load the point cloud
+			if (!Loader::loadCloud(cloudFilename, normalEstimationRadius, smoothingParams, cloud))
+				throw std::runtime_error("Can't load cloud at " + workingDir + cloudFilename);
+		}
+
+
+
+		std::cout << "...calculating descriptor" << std::endl;
+		DescriptorParams descriptorParams = Config::getDescriptorParams();
+		Descriptor descriptor = Calculator::calculateDescriptor(cloud, descriptorParams, Config::getTargetPoint());
+
+
+
+	}
+	catch (std::exception &_ex)
+	{
+		std::cout << "ERROR: " << _ex.what() << std::endl;
+	}
+
+	clock_t end = clock();
+	double elapsedTime = double(end - begin) / CLOCKS_PER_SEC;
+	std::cout << std::fixed << std::setprecision(3) << "Finished in " << elapsedTime << " [s]\n";
+
+	return EXIT_SUCCESS;
+
+
 
 //	try
 //	{
@@ -163,9 +214,9 @@ int main(int _argn, char **_argv)
 //		std::cout << "ERROR: " << _ex.what() << std::endl;
 //	}
 
-	clock_t end = clock();
-	double elapsedTime = double(end - begin) / CLOCKS_PER_SEC;
+	// clock_t end = clock();
+	// double elapsedTime = double(end - begin) / CLOCKS_PER_SEC;
 
-	std::cout << std::fixed << std::setprecision(3) << "Finished in " << elapsedTime << " [s]\n";
-	return EXIT_SUCCESS;
+	// std::cout << std::fixed << std::setprecision(3) << "Finished in " << elapsedTime << " [s]\n";
+	// return EXIT_SUCCESS;
 }

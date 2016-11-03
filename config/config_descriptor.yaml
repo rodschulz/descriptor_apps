@@ -1,0 +1,52 @@
+---
+# flag to enable/disable the debug generation
+debug: false
+# cloud's descriptor target 
+targetPoint: 4185
+# radius used for the normal vectors estimation
+normalEstimationRadius: -1
+# calculation cache directory
+cacheLocation: ../cache/
+
+##### kmeans class debug params #####
+# kmeans:
+#     debugAlgorithm: false
+#     debugMetric: false
+#     centerTitles: false
+#     dataTitles: false
+#     identityTitle: false
+#     displayFactor: 0.2
+#     display: centroid # centroid or center
+
+##### descriptor calculation params #####
+descriptor:
+    patchSize: 0.02
+    bandNumber: 8
+    bandWidth: 0.005
+    bidirectional: false
+    useProjection: false
+    sequenceBin: 0.005
+    sequenceStat: mean # mean or median
+
+##### clustering params #####
+# clustering:
+#     implementation: kmeans # opencv, kmeans, kmedoids or stochastic
+#     metric: [closest, conf] # metric and args (euclidean, closest or closest_with_confidence)
+#     clusterNumber: 50
+#     maxIterations: 200
+#     stopThreshold: 0.0001
+#     attempts: 3
+#     generateElbowCurve: false
+#     generateDistanceMatrix: false
+
+##### cloud smoothing params #####
+cloudSmoothing:
+    useSmoothing: true
+    sigma: 4
+    radius: 0.005
+
+##### Synthetic cloud generation params #####
+syntheticCloud:
+    generateCloud: false
+    type: half_sphere # cube, cylinder, sphere, half_sphere, plane
+...
