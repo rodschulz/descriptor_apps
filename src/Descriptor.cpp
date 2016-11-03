@@ -92,10 +92,11 @@ int main(int _argn, char **_argv)
 				throw std::runtime_error("Can't load cloud at " + workingDir + cloudFilename);
 		}
 
-		// Evaluate the descriptor around the target point
-		std::cout << "...calculating descriptor" << std::endl;
 		int targetPoint = Config::getTargetPoint();
 		DescriptorParams descriptorParams = Config::getDescriptorParams();
+
+		// Evaluate the descriptor around the target point
+		std::cout << "...calculating descriptor at " << targetPoint << std::endl;
 		Descriptor descriptor = Calculator::calculateDescriptor(cloud, descriptorParams, targetPoint);
 
 		// Generate histograms
