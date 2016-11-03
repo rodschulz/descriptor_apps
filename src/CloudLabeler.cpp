@@ -1,6 +1,6 @@
 /**
  * Author: rodrigo
- * 2016     
+ * 2016
  */
 #include <stdlib.h>
 #include <iostream>
@@ -14,10 +14,12 @@
 #include "MetricFactory.hpp"
 #include "Loader.hpp"
 #include "Writer.hpp"
-
+#include "ClusteringUtils.hpp"
 #include <pcl/io/pcd_io.h>
 
+
 #define CONFIG_LOCATION "config/config_cloud_labeler.yaml"
+
 
 int main(int _argn, char **_argv)
 {
@@ -89,7 +91,7 @@ int main(int _argn, char **_argv)
 		else
 		{
 			std::cout << "Performing SVM based labeling" << std::endl;
-			CvSVMPtr svm = ClusteringUtils::prepareClasificator(centers, metadata);
+			CvSVMPtr svm = ClusteringUtils::prepareClassificator(centers, metadata);
 			ClusteringUtils::labelData(descriptors, svm, labels);
 		}
 
