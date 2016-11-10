@@ -6,6 +6,7 @@
 #include <iostream>
 #include <iomanip>
 #include <string>
+#include <boost/lexical_cast.hpp>
 #include "Calculator.hpp"
 #include "CloudFactory.hpp"
 #include "Loader.hpp"
@@ -94,6 +95,9 @@ int main(int _argn, char **_argv)
 
 		int targetPoint = Config::getTargetPoint();
 		DescriptorParams descriptorParams = Config::getDescriptorParams();
+
+		if (targetPoint < 0 || targetPoint >= (int)cloud->size())
+			throw std::runtime_error("Target point out of range (cloud size: " + boost::lexical_cast<std::string>(cloud->size()) + ")");
 
 		// Evaluate the descriptor around the target point
 		std::cout << "...calculating descriptor at " << targetPoint << std::endl;
