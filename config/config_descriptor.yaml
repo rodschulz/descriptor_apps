@@ -2,7 +2,7 @@
 # flag to enable/disable the debug generation
 debug: false
 # cloud's descriptor target 
-targetPoint: 4185
+targetPoint: 2238
 # radius used for the normal vectors estimation
 normalEstimationRadius: -1
 # calculation cache directory
@@ -10,12 +10,12 @@ cacheLocation: ../cache/
 
 ##### descriptor calculation params #####
 descriptor:
-    patchSize: 0.02
+    patchSize: 0.03 # mts
     bandNumber: 8
-    bandWidth: 0.005
+    bandWidth: 0.005 # mts
     bidirectional: false
     useProjection: false
-    sequenceBin: 0.005
+    sequenceBin: 0.01 # mts
     sequenceStat: mean # mean or median
 
 ##### cloud smoothing params #####

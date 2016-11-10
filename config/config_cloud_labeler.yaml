@@ -6,21 +6,21 @@ normalEstimationRadius: -1
 # calculation cache directory
 cacheLocation: ../cache/
 # location of the centers used for the labeling
-centersLocation: config/bow.dat
+centersLocation: config/bow50_c7_1E-4_kmeans.dat #config/bow50_c7_1E-4_opencv.dat #config/bow50.dat
 
 ##### labeling params #####
 labeling:
-    type: metric # metric or svm
+    type: svm # metric or svm
     args: [closest, conf] # arguments according to the labeling type
 
 ##### descriptor calculation params #####
 descriptor:
-    patchSize: 0.02
+    patchSize: 0.03 # mts
     bandNumber: 8
-    bandWidth: 0.005
+    bandWidth: 0.005 # mts
     bidirectional: false
     useProjection: false
-    sequenceBin: 0.005
+    sequenceBin: 0.01 # mts
     sequenceStat: mean # mean or median
 
 ##### cloud smoothing params #####

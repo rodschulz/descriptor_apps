@@ -18,12 +18,12 @@ kmeans:
 
 ##### descriptor calculation params #####
 descriptor:
-    patchSize: 0.02
+    patchSize: 0.03 # mts
     bandNumber: 8
-    bandWidth: 0.005
+    bandWidth: 0.005 # mts
     bidirectional: false
     useProjection: false
-    sequenceBin: 0.005
+    sequenceBin: 0.01 # mts
     sequenceStat: mean # mean or median
 
 ##### clustering params #####
