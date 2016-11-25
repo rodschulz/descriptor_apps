@@ -98,12 +98,12 @@ file(GLOB DENSE_EVALUATOR_SRC "DenseEvaluator.cpp")
 add_executable(DenseEvaluator ${DENSE_EVALUATOR_SRC})
 target_link_libraries(DenseEvaluator ${APPS_LINKING_DEPENDENCIES})
 
-# Target BoWCalculator 
-file(GLOB BOW_CALCULATOR_SRC "BoWCalculator.cpp")
-add_executable(BoWCalculator ${BOW_CALCULATOR_SRC})
-target_link_libraries(BoWCalculator ${APPS_LINKING_DEPENDENCIES})
+# Target CodebookGenerator 
+file(GLOB CODEBOOK_GENERATOR_SRC "CodebookGenerator.cpp")
+add_executable(CodebookGenerator ${CODEBOOK_GENERATOR_SRC})
+target_link_libraries(CodebookGenerator ${APPS_LINKING_DEPENDENCIES})
 
-# Target BoWCalculator 
+# Target CloudLabeler 
 file(GLOB CLOUD_LABELER_SRC "CloudLabeler.cpp")
 add_executable(CloudLabeler ${CLOUD_LABELER_SRC})
 target_link_libraries(CloudLabeler ${APPS_LINKING_DEPENDENCIES})
