@@ -3,6 +3,7 @@
  * 2016
  */
 #include <stdlib.h>
+#include <stdio.h>
 #include <iostream>
 #include <iomanip>
 #include <string>
@@ -14,7 +15,39 @@
 #include "Loader.hpp"
 #include "Writer.hpp"
 
-#define CONFIG_LOCATION "config/config_bow_calculator.yaml"
+#define CONFIG_LOCATION "config/config_codebook_generator.yaml"
+
+
+std::string generateFilename(const int dataRows_, const int dataCols_, const ClusteringParams &params_)
+{
+	std::string str = "codebook";
+	str += "_" + boost::lexical_cast<std::string>(dataRows_) + "-" + boost::lexical_cast<std::string>(dataCols_);
+	str += "_c" + boost::lexical_cast<std::string>(params_.clusterNumber);
+
+	char buffer[50];
+	sprintf(buffer, "%1.0E", params_.stopThreshold);
+	str += "_" + std::string(buffer);
+
+	switch (params_.implementation)
+	{
+	case CLUSTERING_OPENCV:
+		str += "_opencv";
+		break;
+	case CLUSTERING_KMEANS:
+		str += "_kmeans";
+		break;
+	case CLUSTERING_STOCHASTIC:
+		str += "_stochastic";
+		break;
+	case CLUSTERING_KMEDOIDS:
+		str += "_kmedoids";
+		break;
+	}
+	str += ".dat";
+
+	return str;
+}
+
 
 int main(int _argn, char **_argv)
 {
@@ -27,7 +60,7 @@ int main(int _argn, char **_argv)
 	{
 		// Check if enough arguments were given
 		if (_argn < 2)
-			throw std::runtime_error("Not enough exec params given\nUsage: BoWCalculator <input_directory>");
+			throw std::runtime_error("Not enough exec params given\nUsage: CodebookGenerator <input_directory>");
 		std::string inputDirectory = _argv[1];
 
 		// Create the output folder in case it doesn't exists
@@ -87,14 +120,15 @@ int main(int _argn, char **_argv)
 			currentRow += centers[i].first.rows;
 		}
 
-		// Calculate the BoW from the loaded centers
-		std::cout << "Calculating BoW (clustering)" << std::endl;
+		// Calculate the codebook from the loaded centers
+		std::cout << "Calculating codebook (clustering)" << std::endl;
 		ClusteringResults results;
 		Clustering::searchClusters(data, Config::getClusteringParams(), results);
 
-		// Write the BoW to disk
-		std::cout << "Writing BoW" << std::endl;
-		Writer::writeBoW(OUTPUT_DIR "bow.dat", results.centers, Config::getClusteringParams(), nbands, nbins, bidirectional);
+		// Write the codebook to disk
+		std::cout << "Writing codebook" << std::endl;
+		std::string filename = generateFilename(centers[0].first.rows, centers[0].first.cols, Config::getClusteringParams());
+		Writer::writeBoW(OUTPUT_DIR + filename, results.centers, Config::getClusteringParams(), nbands, nbins, bidirectional);
 	}
 	catch (std::exception &_ex)
 	{
