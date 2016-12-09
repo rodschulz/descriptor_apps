@@ -90,7 +90,7 @@ int main(int _argn, char **_argv)
 		else
 		{
 			std::cout << "Performing SVM based labeling" << std::endl;
-			CvSVMPtr svm = ClusteringUtils::prepareClassifier(centers, metadata);
+			SVMPtr svm = ClusteringUtils::prepareClassifier(centers, metadata);
 			ClusteringUtils::labelData(descriptors, svm, labels);
 		}
 

@@ -17,7 +17,8 @@
 #define CONFIG_LOCATION "config/config_descriptor.yaml"
 
 
-void genPointCloud(pcl::PointCloud<pcl::PointNormal>::Ptr &cloud_, const SynCloudType cloudType_)
+void genPointCloud(pcl::PointCloud<pcl::PointNormal>::Ptr &cloud_,
+				   const SynCloudType cloudType_)
 {
 	std::cout << "Generating cloud: " << cloudType[cloudType_] << "\n";
 

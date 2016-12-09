@@ -15,10 +15,13 @@
 #include "Loader.hpp"
 #include "Writer.hpp"
 
+
 #define CONFIG_LOCATION "config/config_codebook_generator.yaml"
 
 
-std::string generateFilename(const int dataRows_, const int dataCols_, const ClusteringParams &params_)
+std::string generateFilename(const int dataRows_,
+							 const int dataCols_,
+							 const ClusteringParams &params_)
 {
 	std::string str = "codebook";
 	str += "_" + boost::lexical_cast<std::string>(dataRows_) + "-" + boost::lexical_cast<std::string>(dataCols_);
