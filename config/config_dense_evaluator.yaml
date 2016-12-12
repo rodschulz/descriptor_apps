@@ -18,6 +18,8 @@ kmeans:
 
 ##### descriptor calculation params #####
 descriptor:
+    type: SHOT # DCH, SHOT, USC, PFH, ROPS
+
     patchSize: 0.03 # mts
     bandNumber: 8
     bandWidth: 0.005 # mts
@@ -26,9 +28,26 @@ descriptor:
     sequenceBin: 0.01 # mts
     sequenceStat: mean # mean or median
 
+    DCH:
+      searchRadius: 0.03 # mts
+      bandNumber: 8
+      bandWidth: 0.005 # mts
+      bidirectional: false
+      useProjection: false
+      binNumber: 3
+      sequenceStat: mean # mean, median, hist
+    SHOT:
+      searchRadius: 0.02 # mts
+    USC:
+      searchRadius: 0.02 # mts
+    PFH:
+      searchRadius: 0.02 # mts
+    ROPS:
+      searchRadius: 0.02 # mts
+
 ##### clustering params #####
 clustering:
-    implementation: kmeans # opencv, kmeans, kmedoids or stochastic
+    implementation: opencv # opencv, kmeans, stochastic
     metric: [closest, conf] # metric and args (euclidean, closest or closest_with_confidence)
     clusterNumber: 50
     maxIterations: 200
