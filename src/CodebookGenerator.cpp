@@ -93,7 +93,7 @@ int main(int _argn, char **_argv)
 		for (size_t i = 0; i < centers.size(); i++)
 		{
 			int auxBands = boost::lexical_cast<int>(centers[i].second["bandNumber"]);
-			int auxBins = (int)(boost::lexical_cast<float>(centers[i].second["patchSize"]) / boost::lexical_cast<float>(centers[i].second["sequenceBin"]));
+			int auxBins = (int)(boost::lexical_cast<float>(centers[i].second["searchRadius"]) / boost::lexical_cast<float>(centers[i].second["sequenceBin"]));
 			bool auxBidir = boost::iequals(centers[i].second["bidirectional"], "true");
 
 			if (i == 0)

@@ -20,7 +20,7 @@ kmeans:
 descriptor:
     type: SHOT # DCH, SHOT, USC, PFH, ROPS
 
-    patchSize: 0.03 # mts
+    searchRadius: 0.03 # mts
     bandNumber: 8
     bandWidth: 0.005 # mts
     bidirectional: false
