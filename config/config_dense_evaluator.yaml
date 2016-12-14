@@ -18,16 +18,7 @@ kmeans:
 
 ##### descriptor calculation params #####
 descriptor:
-    type: SHOT # DCH, SHOT, USC, PFH, ROPS
-
-    searchRadius: 0.03 # mts
-    bandNumber: 8
-    bandWidth: 0.005 # mts
-    bidirectional: false
-    useProjection: false
-    sequenceBin: 0.01 # mts
-    sequenceStat: mean # mean or median
-
+    type: DCH # DCH, SHOT, USC, PFH, ROPS
     DCH:
       searchRadius: 0.03 # mts
       bandNumber: 8
@@ -35,6 +26,7 @@ descriptor:
       bidirectional: false
       useProjection: false
       binNumber: 3
+      sequenceBin: 0.01 # mts
       sequenceStat: mean # mean, median, hist
     SHOT:
       searchRadius: 0.02 # mts
