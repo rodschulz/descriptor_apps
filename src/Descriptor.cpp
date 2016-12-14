@@ -7,7 +7,7 @@
 #include <iomanip>
 #include <string>
 #include <boost/lexical_cast.hpp>
-#include "Calculator.hpp"
+#include "DCH.hpp"
 #include "CloudFactory.hpp"
 #include "Loader.hpp"
 #include "Writer.hpp"
@@ -95,18 +95,19 @@ int main(int _argn, char **_argv)
 		}
 
 		int targetPoint = Config::getTargetPoint();
-		DescriptorParams descriptorParams = Config::getDescriptorParams();
+		DescriptorParamsPtr descriptorParams = Config::getDescriptorParams();
 
 		if (targetPoint < 0 || targetPoint >= (int)cloud->size())
 			throw std::runtime_error("Target point out of range (cloud size: " + boost::lexical_cast<std::string>(cloud->size()) + ")");
 
 		// Evaluate the descriptor around the target point
 		std::cout << "...calculating descriptor at " << targetPoint << std::endl;
-		Descriptor descriptor = Calculator::calculateDescriptor(cloud, descriptorParams, targetPoint);
+		Descriptor descriptor = DCH::calculateDescriptor(cloud, descriptorParams, targetPoint);
 
 		// Generate histograms
 		std::cout << "...generating histograms" << std::endl;
-		std::vector<Hist> histograms = Calculator::generateAngleHistograms(descriptor, descriptorParams.useProjection);
+		DCHParams *params = dynamic_cast<DCHParams *>(descriptorParams.get()); // FIX THIS
+		std::vector<Hist> histograms = DCH::generateAngleHistograms(descriptor, params->useProjection);
 
 		// Write output
 		std::cout << "...writing output" << std::endl;

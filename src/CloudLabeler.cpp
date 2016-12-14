@@ -9,12 +9,11 @@
 #include <opencv2/core/core.hpp>
 #include <boost/algorithm/string.hpp>
 #include "Config.hpp"
-#include "Calculator.hpp"
+#include "DCH.hpp"
 #include "ClusteringUtils.hpp"
 #include "MetricFactory.hpp"
 #include "Loader.hpp"
 #include "Writer.hpp"
-#include <pcl/io/pcd_io.h>
 
 
 #define CONFIG_LOCATION "config/config_cloud_labeler.yaml"
@@ -50,7 +49,7 @@ int main(int _argn, char **_argv)
 		// Retrieve useful parameters
 		double normalEstimationRadius = Config::getNormalEstimationRadius();
 		std::string cacheLocation = Config::getCacheDirectory();
-		DescriptorParams descriptorParams = Config::getDescriptorParams();
+		DescriptorParamsPtr descriptorParams = Config::getDescriptorParams();
 		CloudSmoothingParams smoothingParams = Config::getCloudSmoothingParams();
 
 		// Load point cloud
@@ -66,7 +65,7 @@ int main(int _argn, char **_argv)
 		if (!Loader::loadDescriptors(cacheLocation, cloudFilename, normalEstimationRadius, descriptorParams, smoothingParams, descriptors))
 		{
 			std::cout << "...cache not found, performing descriptor dense evaluation" << std::endl;
-			Calculator::calculateDescriptors(cloud, descriptorParams, descriptors);
+			DCH::calculateDescriptors(cloud, descriptorParams, descriptors);
 			Writer::writeDescriptorsCache(descriptors, cacheLocation, cloudFilename, normalEstimationRadius, descriptorParams, smoothingParams);
 		}
 		std::cout << "...done" << std::endl;
@@ -84,7 +83,7 @@ int main(int _argn, char **_argv)
 		{
 			std::cout << "Performing metric based labeling" << std::endl;
 			std::vector<std::string> metricDetails = Config::get()["labeling"]["args"].as<std::vector<std::string> >();
-			MetricPtr metric = MetricFactory::createMetric(Utils::getMetricType(metricDetails[0]), metricDetails);
+			MetricPtr metric = MetricFactory::createMetric(Metric::toMetricType(metricDetails[0]), metricDetails);
 			ClusteringUtils::labelData(descriptors, centers, metric, labels);
 		}
 		else

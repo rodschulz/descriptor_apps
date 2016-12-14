@@ -9,9 +9,10 @@
 #include <opencv2/core/core.hpp>
 #include "Config.hpp"
 #include "Loader.hpp"
-#include "Calculator.hpp"
+#include "DCH.hpp"
 #include "Writer.hpp"
 #include "Clustering.hpp"
+#include "SHOT.hpp"
 
 
 #define CONFIG_LOCATION "config/config_dense_evaluator.yaml"
@@ -49,7 +50,7 @@ int main(int _argn, char **_argv)
 		// Retrieve useful parameters
 		double normalEstimationRadius = Config::getNormalEstimationRadius();
 		std::string cacheLocation = Config::getCacheDirectory();
-		DescriptorParams descriptorParams = Config::getDescriptorParams();
+		DescriptorParamsPtr descriptorParams = Config::getDescriptorParams();
 		ClusteringParams clusteringParams = Config::getClusteringParams();
 		CloudSmoothingParams smoothingParams = Config::getCloudSmoothingParams();
 
@@ -60,17 +61,29 @@ int main(int _argn, char **_argv)
 			throw std::runtime_error("Can't load cloud at " + workingDir + cloudFilename);
 		std::cout << "...loaded " << cloud->size() << " points in cloud" << std::endl;
 
-		// Descriptor dense evaluation over the point cloud
-		std::cout << "Starting descriptor dense evaluation" << std::endl;
+		// Dense evaluation over the point cloud
+		std::cout << "Starting dense evaluation (" << descType[descriptorParams->type] << ")" << std::endl;
 		cv::Mat descriptors;
 		if (!Loader::loadDescriptors(cacheLocation, cloudFilename, normalEstimationRadius, descriptorParams, smoothingParams, descriptors))
 		{
-			std::cout << "...cache not found, performing descriptor dense evaluation" << std::endl;
-			Calculator::calculateDescriptors(cloud, descriptorParams, descriptors);
+			std::cout << "...cache not found, performing dense evaluation" << std::endl;
+
+			switch (descriptorParams->type)
+			{
+			default:
+				std::cout << "WARNING: wrong descriptor type, assuming DCH" << std::endl;
+			case DESCRIPTOR_DCH:
+				DCH::calculateDescriptors(cloud, descriptorParams, descriptors);
+				break;
+
+			case DESCRIPTOR_SHOT:
+				SHOT::computeDense(cloud, descriptorParams, descriptors);
+				break;
+			}
 			Writer::writeDescriptorsCache(descriptors, cacheLocation, cloudFilename, normalEstimationRadius, descriptorParams, smoothingParams);
 		}
 
-		std::cout << "Performing data size reduction (clustering)" << std::endl;
+		std::cout << "Performing data size reduction" << std::endl;
 		ClusteringResults results;
 		Clustering::searchClusters(descriptors, Config::getClusteringParams(), results);
 
