@@ -42,9 +42,6 @@ std::string generateFilename(const int dataRows_,
 	case CLUSTERING_STOCHASTIC:
 		str += "_stochastic";
 		break;
-	case CLUSTERING_KMEDOIDS:
-		str += "_kmedoids";
-		break;
 	}
 	str += ".dat";
 

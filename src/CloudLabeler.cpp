@@ -83,7 +83,7 @@ int main(int _argn, char **_argv)
 		{
 			std::cout << "Performing metric based labeling" << std::endl;
 			std::vector<std::string> metricDetails = Config::get()["labeling"]["args"].as<std::vector<std::string> >();
-			MetricPtr metric = MetricFactory::createMetric(Metric::toMetricType(metricDetails[0]), metricDetails);
+			MetricPtr metric = MetricFactory::create(Metric::toType(metricDetails[0]), metricDetails);
 			ClusteringUtils::labelData(descriptors, centers, metric, labels);
 		}
 		else

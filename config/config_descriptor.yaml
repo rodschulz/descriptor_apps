@@ -10,13 +10,15 @@ cacheLocation: ../cache/
 
 ##### descriptor calculation params #####
 descriptor:
-    searchRadius: 0.03 # mts
-    bandNumber: 8
-    bandWidth: 0.005 # mts
-    bidirectional: false
-    useProjection: false
-    sequenceBin: 0.01 # mts
-    sequenceStat: mean # mean or median
+    type: DCH
+    DCH:
+      searchRadius: 0.03 # mts
+      bandNumber: 8
+      bandWidth: 0.005 # mts
+      bidirectional: false
+      useProjection: false
+      sequenceBin: 0.01 # mts
+      sequenceStat: mean # mean or median
 
 ##### cloud smoothing params #####
 cloudSmoothing:

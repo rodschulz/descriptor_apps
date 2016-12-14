@@ -14,7 +14,7 @@ kmeans:
 
     ##### clustering params #####
 clustering:
-    implementation: kmeans # opencv, kmeans, kmedoids or stochastic
+    implementation: kmeans # opencv, kmeans or stochastic
     metric: [closest, 4] # metric and args (euclidean, closest or closest_with_confidence)
     clusterNumber: 7
     maxIterations: 300

@@ -96,24 +96,26 @@ int main(int _argn, char **_argv)
 
 		int targetPoint = Config::getTargetPoint();
 		DescriptorParamsPtr descriptorParams = Config::getDescriptorParams();
+		DCHParams *params = dynamic_cast<DCHParams *>(descriptorParams.get());
+		if (params)
+		{
+			if (targetPoint < 0 || targetPoint >= (int)cloud->size())
+				throw std::runtime_error("Target point out of range (cloud size: " + boost::lexical_cast<std::string>(cloud->size()) + ")");
 
-		if (targetPoint < 0 || targetPoint >= (int)cloud->size())
-			throw std::runtime_error("Target point out of range (cloud size: " + boost::lexical_cast<std::string>(cloud->size()) + ")");
+			// Evaluate the descriptor around the target point
+			std::cout << "...calculating descriptor at " << targetPoint << std::endl;
+			Descriptor descriptor = DCH::calculateDescriptor(cloud, descriptorParams, targetPoint);
 
-		// Evaluate the descriptor around the target point
-		std::cout << "...calculating descriptor at " << targetPoint << std::endl;
-		Descriptor descriptor = DCH::calculateDescriptor(cloud, descriptorParams, targetPoint);
+			// Generate histograms
+			std::cout << "...generating histograms" << std::endl;
+			std::vector<Hist> histograms = DCH::generateAngleHistograms(descriptor, params->useProjection);
 
-		// Generate histograms
-		std::cout << "...generating histograms" << std::endl;
-		DCHParams *params = dynamic_cast<DCHParams *>(descriptorParams.get()); // FIX THIS
-		std::vector<Hist> histograms = DCH::generateAngleHistograms(descriptor, params->useProjection);
-
-		// Write output
-		std::cout << "...writing output" << std::endl;
-		Writer::writeOuputData(cloud, descriptor, histograms, descriptorParams, targetPoint);
-
-
+			// Write output
+			std::cout << "...writing output" << std::endl;
+			Writer::writeOuputData(cloud, descriptor, histograms, descriptorParams, targetPoint);
+		}
+		else
+			std::cout << "WARNING: app only works with DCH descriptor" <<  std::endl;
 	}
 	catch (std::exception &_ex)
 	{
