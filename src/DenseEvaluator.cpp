@@ -27,7 +27,8 @@ std::string genFilename(const int rows_, const int cols_, const DescriptorType t
 	std::string filename = "centers_"
 						   + descType[type_].substr(11)
 						   + "_" + boost::lexical_cast<std::string>(rows_)
-						   + "_" + boost::lexical_cast<std::string>(cols_);
+						   + "_" + boost::lexical_cast<std::string>(cols_)
+						   + ".dat";
 	return filename;
 }
 
