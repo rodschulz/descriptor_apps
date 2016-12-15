@@ -6,6 +6,8 @@
 #include <iostream>
 #include <iomanip>
 #include <string>
+#include <plog/Log.h>
+#include <plog/Appenders/ColorConsoleAppender.h>
 #include <opencv2/core/core.hpp>
 #include "Config.hpp"
 #include "Loader.hpp"
@@ -20,6 +22,10 @@
 
 int main(int _argn, char **_argv)
 {
+	static plog::ColorConsoleAppender<plog::TxtFormatter> consoleAppender;
+	plog::init(plog::info, &consoleAppender);
+
+
 	// Get the current exec directory
 	std::string workingDir = Utils::getWorkingDirectory();
 
@@ -29,21 +35,23 @@ int main(int _argn, char **_argv)
 	{
 		// Check if enough arguments were given
 		if (_argn < 2)
-			throw std::runtime_error("Not enough exec params given\nUsage: DenseEvaluator <input_cloud_file>");
+			throw std::runtime_error("Not enough exec params given\n\tUsage: DenseEvaluator <input_cloud_file>");
 		std::string cloudFilename = _argv[1];
+
+		LOGI << "START!";
 
 		// Create the output folder in case it doesn't exists
 		if (system("mkdir -p " OUTPUT_DIR) != 0)
-			throw std::runtime_error("can't create the output folder: " + workingDir + OUTPUT_DIR);
+			throw std::runtime_error("Can't create the output folder: " + workingDir + OUTPUT_DIR);
 
 		// Clean output and debug directory
 		if (system("rm -rf " OUTPUT_DIR "*") != 0)
-			std::cout << (std::string) "WARNING: can't clean output directory: " + workingDir + OUTPUT_DIR << std::endl;
+			LOGW << "Can't clean output directory: " + workingDir + OUTPUT_DIR;
 		if (system("rm -rf " DEBUG_DIR "*") != 0)
-			std::cout << (std::string) "WARNING: can't clean debug directory: " + workingDir + DEBUG_DIR << std::endl;
+			LOGW << "Can't clean debug directory: " + workingDir + DEBUG_DIR;
 
 		// Load the configuration file
-		std::cout << "Loading configuration" << std::endl;
+		LOGI << "Loading configuration";
 		if (!Config::load(CONFIG_LOCATION))
 			throw std::runtime_error((std::string) "Error reading config at " + workingDir + CONFIG_LOCATION);
 
@@ -55,23 +63,23 @@ int main(int _argn, char **_argv)
 		CloudSmoothingParams smoothingParams = Config::getCloudSmoothingParams();
 
 		// Load point cloud
-		std::cout << "Loading point cloud at " << cloudFilename << std::endl;
+		LOGI << "Loading point cloud at " << cloudFilename;
 		pcl::PointCloud<pcl::PointNormal>::Ptr cloud(new pcl::PointCloud<pcl::PointNormal>());
 		if (!Loader::loadCloud(cloudFilename, normalEstimationRadius, smoothingParams, cloud))
 			throw std::runtime_error("Can't load cloud at " + workingDir + cloudFilename);
-		std::cout << "...loaded " << cloud->size() << " points in cloud" << std::endl;
+		LOGI << "...loaded " << cloud->size() << " points in cloud";
 
 		// Dense evaluation over the point cloud
-		std::cout << "Starting dense evaluation (" << descType[descriptorParams->type] << ")" << std::endl;
+		LOGI << "Starting dense evaluation (" << descType[descriptorParams->type] << ")";
 		cv::Mat descriptors;
 		if (!Loader::loadDescriptors(cacheLocation, cloudFilename, normalEstimationRadius, descriptorParams, smoothingParams, descriptors))
 		{
-			std::cout << "...cache not found, performing dense evaluation" << std::endl;
+			LOGI << "...cache not found, performing dense evaluation";
 
 			switch (descriptorParams->type)
 			{
 			default:
-				std::cout << "WARNING: wrong descriptor type, assuming DCH" << std::endl;
+				LOGW << "WARNING: wrong descriptor type, assuming DCH";
 			case DESCRIPTOR_DCH:
 				DCH::calculateDescriptors(cloud, descriptorParams, descriptors);
 				break;
@@ -83,12 +91,12 @@ int main(int _argn, char **_argv)
 			Writer::writeDescriptorsCache(descriptors, cacheLocation, cloudFilename, normalEstimationRadius, descriptorParams, smoothingParams);
 		}
 
-		std::cout << "Performing data size reduction" << std::endl;
+		LOGI << "Performing data size reduction";
 		ClusteringResults results;
-		Clustering::searchClusters(descriptors, Config::getClusteringParams(), results);
+		Clustering::searchClusters(descriptors, clusteringParams, results);
 
 		// Generate outputs
-		std::cout << "Writing reduced data" << std::endl;
+		LOGI << "Writing reduced data";
 		Writer::writeClustersCenters(OUTPUT_DIR "centers.dat", results.centers, descriptorParams, clusteringParams, smoothingParams);
 
 		if (clusteringParams.generateDistanceMatrix)
@@ -99,12 +107,12 @@ int main(int _argn, char **_argv)
 	}
 	catch (std::exception &_ex)
 	{
-		std::cout << "ERROR: " << _ex.what() << std::endl;
+		LOGE << _ex.what();
 	}
 
 	clock_t end = clock();
 	double elapsedTime = double(end - begin) / CLOCKS_PER_SEC;
-	std::cout << std::fixed << std::setprecision(3) << "Finished in " << elapsedTime << " [s]\n";
+	LOGI << std::fixed << std::setprecision(3) << "Finished in " << elapsedTime << " [s]";
 
 	return EXIT_SUCCESS;
 }
