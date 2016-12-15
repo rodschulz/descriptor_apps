@@ -9,6 +9,7 @@
 #include <plog/Log.h>
 #include <plog/Appenders/ColorConsoleAppender.h>
 #include <opencv2/core/core.hpp>
+#include <boost/lexical_cast.hpp>
 #include "Config.hpp"
 #include "Loader.hpp"
 #include "DCH.hpp"
@@ -19,6 +20,16 @@
 
 #define CONFIG_LOCATION "config/config_dense_evaluator.yaml"
 #define LOGGING_LOCATION "config/logging.yaml"
+
+
+std::string genFilename(const int rows_, const int cols_, const DescriptorType type_)
+{
+	std::string filename = "centers_"
+						   + descType[type_].substr(11)
+						   + "_" + boost::lexical_cast<std::string>(rows_)
+						   + "_" + boost::lexical_cast<std::string>(cols_);
+	return filename;
+}
 
 
 int main(int _argn, char **_argv)
@@ -96,15 +107,27 @@ int main(int _argn, char **_argv)
 		ClusteringResults results;
 		Clustering::searchClusters(descriptors, clusteringParams, results);
 
+
 		// Generate outputs
 		LOGI << "Writing reduced data";
-		Writer::writeClustersCenters(OUTPUT_DIR "centers.dat", results.centers, descriptorParams, clusteringParams, smoothingParams);
+		std::string filename = genFilename(results.centers.rows, results.centers.cols, descriptorParams->type);
+		Writer::writeClustersCenters(OUTPUT_DIR + filename,
+									 results.centers,
+									 descriptorParams,
+									 clusteringParams,
+									 smoothingParams);
+
 
 		if (clusteringParams.generateDistanceMatrix)
-			Writer::writeDistanceMatrix(OUTPUT_DIR, descriptors, results.centers, results.labels, clusteringParams.metric);
+			Writer::writeDistanceMatrix(OUTPUT_DIR,
+										descriptors,
+										results.centers,
+										results.labels,
+										clusteringParams.metric);
 
 		if (clusteringParams.generateElbowCurve)
-			Clustering::generateElbowGraph(descriptors, clusteringParams);
+			Clustering::generateElbowGraph(descriptors,
+										   clusteringParams);
 	}
 	catch (std::exception &_ex)
 	{

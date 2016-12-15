@@ -23,12 +23,12 @@
 void genPointCloud(pcl::PointCloud<pcl::PointNormal>::Ptr &cloud_,
 				   const SynCloudType cloudType_)
 {
-	std::cout << "Generating cloud: " << cloudType[cloudType_] << "\n";
+	LOGI << "Generating cloud: " << cloudType[cloudType_];
 
 	switch (cloudType_)
 	{
 	default:
-		std::cout << "WARNING, wrong synthetic cloud params, assuming cube\n";
+		LOGW << "Wrong synthetic cloud params, assuming cube";
 
 	case CLOUD_CUBE:
 		cloud_ = CloudFactory::createCube(5, Eigen::Vector3f(0, 0, 0), 20000);
@@ -66,18 +66,21 @@ int main(int _argn, char **_argv)
 	clock_t begin = clock();
 	try
 	{
+		LOGI << "START!";
+
 		// Create the output folder in case it doesn't exists
 		if (system("mkdir -p " OUTPUT_DIR) != 0)
 			throw std::runtime_error("can't create the output folder: " + workingDir + OUTPUT_DIR);
 
 		// Clean the output directory
 		if (system("rm -rf " OUTPUT_DIR "*") != 0)
-			std::cout << (std::string) "WARNING: can't clean output directory: " + workingDir + OUTPUT_DIR << std::endl;
+			LOGW << "Can't clean output directory: " + workingDir + OUTPUT_DIR;
 
 		// Load the configuration file
-		std::cout << "Loading configuration" << std::endl;
+		LOGI << "Loading configuration";
 		if (!Config::load(CONFIG_LOCATION))
 			throw std::runtime_error((std::string) "Error reading config at " + workingDir + CONFIG_LOCATION);
+
 
 		// Load or generate the cloud
 		pcl::PointCloud<pcl::PointNormal>::Ptr cloud(new pcl::PointCloud<pcl::PointNormal>());
@@ -88,18 +91,21 @@ int main(int _argn, char **_argv)
 		{
 			// Check if enough params were given
 			if (_argn < 2)
-				throw std::runtime_error("Not enough exec params given\nUsage: Descriptor <input_file>");
+				throw std::runtime_error("Not enough exec params given\n\tUsage: Descriptor <input_file>");
 
 			std::string cloudFilename = _argv[1];
+
 
 			// Retrieve useful parameters
 			double normalEstimationRadius = Config::getNormalEstimationRadius();
 			CloudSmoothingParams smoothingParams = Config::getCloudSmoothingParams();
 
+
 			// Load the point cloud
 			if (!Loader::loadCloud(cloudFilename, normalEstimationRadius, smoothingParams, cloud))
 				throw std::runtime_error("Can't load cloud at " + workingDir + cloudFilename);
 		}
+
 
 		int targetPoint = Config::getTargetPoint();
 		DescriptorParamsPtr descriptorParams = Config::getDescriptorParams();
@@ -109,29 +115,32 @@ int main(int _argn, char **_argv)
 			if (targetPoint < 0 || targetPoint >= (int)cloud->size())
 				throw std::runtime_error("Target point out of range (cloud size: " + boost::lexical_cast<std::string>(cloud->size()) + ")");
 
+
 			// Evaluate the descriptor around the target point
-			std::cout << "...calculating descriptor at " << targetPoint << std::endl;
+			LOGI << "...calculating descriptor at " << targetPoint;
 			Descriptor descriptor = DCH::calculateDescriptor(cloud, descriptorParams, targetPoint);
 
+
 			// Generate histograms
-			std::cout << "...generating histograms" << std::endl;
+			LOGI << "...generating histograms";
 			std::vector<Hist> histograms = DCH::generateAngleHistograms(descriptor, params->useProjection);
 
+
 			// Write output
-			std::cout << "...writing output" << std::endl;
+			LOGI << "...writing output";
 			Writer::writeOuputData(cloud, descriptor, histograms, descriptorParams, targetPoint);
 		}
 		else
-			std::cout << "WARNING: app only works with DCH descriptor" <<  std::endl;
+			LOGW << "App only works with DCH descriptor";
 	}
 	catch (std::exception &_ex)
 	{
-		std::cout << "ERROR: " << _ex.what() << std::endl;
+		LOGE << _ex.what();
 	}
 
 	clock_t end = clock();
 	double elapsedTime = double(end - begin) / CLOCKS_PER_SEC;
-	std::cout << std::fixed << std::setprecision(3) << "Finished in " << elapsedTime << " [s]\n";
+	LOGI << std::fixed << std::setprecision(3) << "Finished in " << elapsedTime << " [s]";
 
 	return EXIT_SUCCESS;
 }
