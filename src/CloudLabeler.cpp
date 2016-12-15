@@ -19,12 +19,13 @@
 
 
 #define CONFIG_LOCATION "config/config_cloud_labeler.yaml"
+#define LOGGING_LOCATION "config/logging.yaml"
 
 
 int main(int _argn, char **_argv)
 {
 	static plog::ColorConsoleAppender<plog::TxtFormatter> consoleAppender;
-	plog::init(plog::info, &consoleAppender);
+	plog::init(plog::severityFromString(YAML::LoadFile(LOGGING_LOCATION)["level"].as<std::string>().c_str()), &consoleAppender);
 
 
 	// Get the current exec directory

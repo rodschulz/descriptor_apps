@@ -7,6 +7,8 @@
 #include <iomanip>
 #include <string>
 #include <boost/lexical_cast.hpp>
+#include <plog/Log.h>
+#include <plog/Appenders/ColorConsoleAppender.h>
 #include "DCH.hpp"
 #include "CloudFactory.hpp"
 #include "Loader.hpp"
@@ -15,6 +17,7 @@
 
 
 #define CONFIG_LOCATION "config/config_descriptor.yaml"
+#define LOGGING_LOCATION "config/logging.yaml"
 
 
 void genPointCloud(pcl::PointCloud<pcl::PointNormal>::Ptr &cloud_,
@@ -52,6 +55,10 @@ void genPointCloud(pcl::PointCloud<pcl::PointNormal>::Ptr &cloud_,
 
 int main(int _argn, char **_argv)
 {
+	static plog::ColorConsoleAppender<plog::TxtFormatter> consoleAppender;
+	plog::init(plog::severityFromString(YAML::LoadFile(LOGGING_LOCATION)["level"].as<std::string>().c_str()), &consoleAppender);
+
+
 	// Get the current exec directory
 	std::string workingDir = Utils::getWorkingDirectory();
 
