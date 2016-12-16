@@ -82,31 +82,37 @@ set(APPS_LINKING_DEPENDENCIES
 	${YAML_CPP_LIBRARIES}
 	${OpenCV_LIBS})
 
-# Target Test
-file(GLOB TEST_SRC "Test.cpp" "descriptor_lib/test/*.cpp")
-add_executable(Test ${TEST_SRC})
-set_target_properties(Test PROPERTIES COMPILE_DEFINITIONS "BOOST_TEST_DYN_LINK")
-target_link_libraries(Test ${APPS_LINKING_DEPENDENCIES} ${Boost_UNIT_TEST_FRAMEWORK_LIBRARY})
 
-# Target Descriptor 
-file(GLOB DESCRIPTOR_SRC "Descriptor.cpp")
-add_executable(Descriptor ${DESCRIPTOR_SRC})
-target_link_libraries(Descriptor ${APPS_LINKING_DEPENDENCIES})
-
-# Target DenseEvaluator 
-file(GLOB DENSE_EVALUATOR_SRC "DenseEvaluator.cpp")
-add_executable(DenseEvaluator ${DENSE_EVALUATOR_SRC})
-target_link_libraries(DenseEvaluator ${APPS_LINKING_DEPENDENCIES})
+# Target CloudLabeler 
+file(GLOB CLOUD_LABELER_SRC "CloudLabeler.cpp")
+add_executable(CloudLabeler ${CLOUD_LABELER_SRC})
+target_link_libraries(CloudLabeler ${APPS_LINKING_DEPENDENCIES})
 
 # Target CodebookGenerator 
 file(GLOB CODEBOOK_GENERATOR_SRC "CodebookGenerator.cpp")
 add_executable(CodebookGenerator ${CODEBOOK_GENERATOR_SRC})
 target_link_libraries(CodebookGenerator ${APPS_LINKING_DEPENDENCIES})
 
-# Target CloudLabeler 
-file(GLOB CLOUD_LABELER_SRC "CloudLabeler.cpp")
-add_executable(CloudLabeler ${CLOUD_LABELER_SRC})
-target_link_libraries(CloudLabeler ${APPS_LINKING_DEPENDENCIES})
+# Target DenseEvaluator 
+file(GLOB DENSE_EVALUATOR_SRC "DenseEvaluator.cpp")
+add_executable(DenseEvaluator ${DENSE_EVALUATOR_SRC})
+target_link_libraries(DenseEvaluator ${APPS_LINKING_DEPENDENCIES})
+
+# Target Descriptor 
+file(GLOB DESCRIPTOR_SRC "Descriptor.cpp")
+add_executable(Descriptor ${DESCRIPTOR_SRC})
+target_link_libraries(Descriptor ${APPS_LINKING_DEPENDENCIES})
+
+# Target Reprocessor
+file(GLOB REPROCESSOR_SRC "Reprocessor.cpp")
+add_executable(Reprocessor ${REPROCESSOR_SRC})
+target_link_libraries(Reprocessor ${APPS_LINKING_DEPENDENCIES})
+
+# Target Test
+file(GLOB TEST_SRC "Test.cpp" "descriptor_lib/test/*.cpp")
+add_executable(Test ${TEST_SRC})
+set_target_properties(Test PROPERTIES COMPILE_DEFINITIONS "BOOST_TEST_DYN_LINK")
+target_link_libraries(Test ${APPS_LINKING_DEPENDENCIES} ${Boost_UNIT_TEST_FRAMEWORK_LIBRARY})
 
 # get_cmake_property(_variableNames VARIABLES)
 # foreach (_variableName ${_variableNames})
