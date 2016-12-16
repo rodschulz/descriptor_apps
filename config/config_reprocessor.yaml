@@ -1,0 +1,29 @@
+---
+# flag to enable/disable the debug generation
+debug: false
+# radius used for the normal vectors estimation
+normalEstimationRadius: -1
+# calculation cache directory
+cacheLocation: ../cache/
+
+##### descriptor calculation params #####
+descriptor:
+    type: SHOT # DCH, SHOT, USC, PFH, ROPS
+    DCH:
+      searchRadius: 0.03 # mts
+      bandNumber: 8
+      bandWidth: 0.005 # mts
+      bidirectional: false
+      useProjection: false
+      binNumber: 3
+      sequenceBin: 0.01 # mts
+      sequenceStat: mean # mean, median, hist
+    SHOT:
+      searchRadius: 0.02 # mts
+    USC:
+      searchRadius: 0.02 # mts
+    PFH:
+      searchRadius: 0.02 # mts
+    ROPS:
+      searchRadius: 0.02 # mts
+...

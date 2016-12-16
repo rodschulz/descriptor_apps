@@ -42,27 +42,27 @@ int main(int _argn, char **_argv)
 	clock_t begin = clock();
 	try
 	{
-		// Check if enough arguments were given
 		if (_argn < 2)
 			throw std::runtime_error("Not enough exec params given\n\tUsage: DenseEvaluator <input_cloud_file>");
 		std::string cloudFilename = _argv[1];
 
+
 		LOGI << "START!";
 		Utils::cleanDirectories(workingDir);
 
-		// Load the configuration file
+
 		LOGI << "Loading configuration";
 		if (!Config::load(CONFIG_LOCATION))
-			throw std::runtime_error((std::string) "Error reading config at " + workingDir + CONFIG_LOCATION);
+			throw std::runtime_error("Error reading config at " + workingDir + CONFIG_LOCATION);
 
-		// Retrieve useful parameters
+
 		double normalEstimationRadius = Config::getNormalEstimationRadius();
 		std::string cacheLocation = Config::getCacheDirectory();
 		DescriptorParamsPtr descriptorParams = Config::getDescriptorParams();
 		ClusteringParams clusteringParams = Config::getClusteringParams();
 		CloudSmoothingParams smoothingParams = Config::getCloudSmoothingParams();
 
-		// Load point cloud
+
 		LOGI << "Loading point cloud at " << cloudFilename;
 		pcl::PointCloud<pcl::PointNormal>::Ptr cloud(new pcl::PointCloud<pcl::PointNormal>());
 		if (!Loader::loadCloud(cloudFilename, normalEstimationRadius, smoothingParams, cloud))

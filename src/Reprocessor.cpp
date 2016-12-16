@@ -6,15 +6,23 @@
 #include <plog/Appenders/ColorConsoleAppender.h>
 #include <boost/foreach.hpp>
 #include <boost/filesystem.hpp>
+#include <Eigen/Geometry>
+#include <pcl/io/pcd_io.h>
+#include <pcl/kdtree/kdtree_flann.h>
 #include "Utils.hpp"
+#include "Loader.hpp"
+#include "Config.hpp"
+#include "CloudFactory.hpp"
+#include "PointFactory.hpp"
 
 
+#define CONFIG_LOCATION "config/config_reprocessor.yaml"
 #define LOGGING_LOCATION "config/logging.yaml"
 
 
 void crawlDirectory(const std::string &directory_,
 					std::map<std::string, std::string> &cloudMap_,
-					std::map<std::string, std::vector<std::string> > &files_)
+					std::map<std::string, std::vector<boost::filesystem::path> > &files_)
 {
 	boost::filesystem::path target(directory_);
 	boost::filesystem::directory_iterator it(target), eod;
@@ -32,7 +40,7 @@ void crawlDirectory(const std::string &directory_,
 
 			std::string extension = filePath.extension().string();
 			if (boost::iequals(extension, ".yaml"))
-				files_[id].push_back(filePath.string());
+				files_[id].push_back(filePath);
 			else if (boost::iequals(extension, ".pcd"))
 			{
 				if (cloudMap_.find(id) == cloudMap_.end())
@@ -46,6 +54,89 @@ void crawlDirectory(const std::string &directory_,
 	}
 }
 
+void showPointLoc(const pcl::PointCloud<pcl::PointNormal>::Ptr cloud_,
+				  const int pointIndex_,
+				  const std::string &id_)
+{
+	pcl::PointCloud<pcl::PointXYZRGBNormal>::Ptr colored = CloudFactory::createColorCloud(cloud_, Utils::palette12(0));
+	(*colored)[pointIndex_].rgba = Utils::getColor(255, 0, 0);
+
+	pcl::io::savePCDFileASCII(OUTPUT_DIR + id_ + "_point.pcd", *colored);
+}
+
+void showGrasp(const pcl::PointCloud<pcl::PointNormal>::Ptr cloud_,
+			   const YAML::Node &pose_,
+			   const std::string &id_)
+{
+	pcl::PointCloud<pcl::PointXYZRGBNormal>::Ptr grasp = CloudFactory::createColorCloud(cloud_, Utils::palette12(0));
+
+	// Add the grasping point to the cloud
+	float x = pose_["position"]["x"].as<float>();
+	float y = pose_["position"]["y"].as<float>();
+	float z = pose_["position"]["z"].as<float>();
+	grasp->push_back(PointFactory::createPointXYZRGBNormal(x, y, z, 0, 0, 0, 0, Utils::getColor(255, 0, 0)));
+
+	float dx = pose_["orientation"]["x"].as<float>();
+	float dy = pose_["orientation"]["y"].as<float>();
+	float dz = pose_["orientation"]["z"].as<float>();
+	float dw = pose_["orientation"]["w"].as<float>();
+
+	Eigen::Vector3f origin = Eigen::Vector3f(x, y, z);
+	Eigen::Vector3f direction = Eigen::Quaternionf(dw, dx, dy, dz) * Eigen::Vector3f(1, 0, 0);
+	Eigen::ParametrizedLine<float, 3> line(origin, direction);
+
+	// Add a set of point showing the orientation
+	float delta = 0.2;
+	float step = 0.001;
+	for (float t = step; t < delta; t += step)
+	{
+		Eigen::Vector3f p = line.pointAt(t);
+		grasp->push_back(PointFactory::createPointXYZRGBNormal(p.x(), p.y(), p.z(), 0, 0, 0, 0, Utils::getColor(0, 255, 0)));
+	}
+
+	pcl::io::savePCDFileASCII(OUTPUT_DIR + id_ + "_grasp.pcd", *grasp);
+}
+
+int findTargetPoint(const pcl::PointCloud<pcl::PointNormal>::Ptr cloud_,
+					const YAML::Node &pose_)
+{
+	// Add the grasping point to the cloud
+	float x = pose_["position"]["x"].as<float>();
+	float y = pose_["position"]["y"].as<float>();
+	float z = pose_["position"]["z"].as<float>();
+
+	float dx = pose_["orientation"]["x"].as<float>();
+	float dy = pose_["orientation"]["y"].as<float>();
+	float dz = pose_["orientation"]["z"].as<float>();
+	float dw = pose_["orientation"]["w"].as<float>();
+
+	Eigen::Vector3f origin = Eigen::Vector3f(x, y, z);
+	Eigen::Vector3f direction = Eigen::Quaternionf(dw, dx, dy, dz) * Eigen::Vector3f(1, 0, 0);
+	Eigen::ParametrizedLine<float, 3> line(origin, direction);
+
+
+	pcl::KdTreeFLANN<pcl::PointNormal> kdtree;
+	kdtree.setInputCloud(cloud_);
+
+	int target = -1;
+	float distance = std::numeric_limits<float>::max();
+	float step = 0.001;
+	for (float t = step; t < 0.2; t += step)
+	{
+		Eigen::Vector3f p = line.pointAt(t);
+		std::vector<int> indices;
+		std::vector<float> distances;
+		kdtree.nearestKSearch(PointFactory::createPointNormal(p.x(), p.y(), p.z(), 0, 0, 0), 1, indices, distances);
+
+		if (target == -1 || distances[0] < distance)
+		{
+			target = indices[0];
+			distance = distances[0];
+		}
+	}
+
+	return target;
+}
 
 int main(int _argn, char **_argv)
 {
@@ -63,22 +154,60 @@ int main(int _argn, char **_argv)
 		std::string inputDirectory = _argv[1];
 
 		LOGI << "START!";
+		Utils::cleanDirectories(workingDir);
 
-		LOGI << "Crawling of files";
+
+		LOGI << "Loading configuration";
+		if (!Config::load(CONFIG_LOCATION))
+			throw std::runtime_error("Error reading config at " + workingDir + CONFIG_LOCATION);
+		DescriptorParamsPtr params = Config::getDescriptorParams();
+
+
+		LOGI << "Crawling files";
 		std::map<std::string, std::string> cloudMap;
-		std::map<std::string, std::vector<std::string> > dataFiles;
+		std::map<std::string, std::vector<boost::filesystem::path> > dataFiles;
 		crawlDirectory(inputDirectory, cloudMap, dataFiles);
 
-		// LOGD << "CHECK!";
-		// for (std::map<std::string, std::string>::const_iterator it = cloudMap.begin(); it != cloudMap.end(); it++)
-		// {
-		// 	LOGD << "=====" << it->first << "=====";
-		// 	for (size_t i = 0; i < dataFiles[it->first].size(); i++)
-		// 		LOGD << dataFiles[it->first][i];
-		// }
 
-		for (std::map<std::string, std::string>::const_iterator it = cloudMap.begin(); it != cloudMap.end(); it++)
+		LOGI << "Processing data";
+		bool debug = Config::debugEnabled();
+		for (std::map<std::string, std::vector<boost::filesystem::path> >::const_iterator it = dataFiles.begin(); it != dataFiles.end(); it++)
 		{
+			LOGI << "Loading cloud " << cloudMap[it->first];
+			pcl::PointCloud<pcl::PointNormal>::Ptr cloud(new pcl::PointCloud<pcl::PointNormal>());
+			if (!Loader::loadCloud(cloudMap[it->first], -1, CloudSmoothingParams(), cloud))
+				LOGE << "Can't load cloud " << it->first << ", skipping";
+
+
+			for (std::vector<boost::filesystem::path>::const_iterator f = it->second.begin(); f != it->second.end(); f++)
+			{
+				LOGI << "Reprocessing " << f->filename();
+				YAML::Node file =  YAML::LoadFile(f->string());
+
+				int target = findTargetPoint(cloud, file["grasp"]["grasp_pose"]["pose"]);
+				std::string id = f->filename().string();
+				id = id.substr(0, id.find_last_of('.'));
+				LOGI << "...target point: " << target;
+
+				if (debug)
+				{
+					showPointLoc(cloud, file["descriptor"]["point_index"].as<int>(), id);
+					showGrasp(cloud, file["grasp"]["grasp_pose"]["pose"], id);
+					showPointLoc(cloud, target, id);
+				}
+
+
+				LOGI << "...running " + descType[params->type];
+				switch (params->type)
+				{
+				default:
+				case DESCRIPTOR_DCH:
+					break;
+
+				case DESCRIPTOR_SHOT:
+					break;
+				}
+			}
 		}
 	}
 	catch (std::exception &_ex)
