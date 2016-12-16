@@ -156,15 +156,7 @@ int main(int _argn, char **_argv)
 		std::string inputDirectory = _argv[1];
 
 		LOGI << "START!";
-
-		// Create the output folder in case it doesn't exists
-		if (system("mkdir -p " OUTPUT_DIR) != 0)
-			throw std::runtime_error("can't create the output folder: " + workingDir + OUTPUT_DIR);
-
-		// Clean the output directory
-		if (system("rm -rf " OUTPUT_DIR "*") != 0)
-			LOGW << "Can't clean output directory: " + workingDir + OUTPUT_DIR;
-
+		Utils::cleanDirectories(workingDir);
 
 		// Load the configuration file
 		LOGI << "Loading configuration";

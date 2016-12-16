@@ -48,16 +48,7 @@ int main(int _argn, char **_argv)
 		std::string cloudFilename = _argv[1];
 
 		LOGI << "START!";
-
-		// Create the output folder in case it doesn't exists
-		if (system("mkdir -p " OUTPUT_DIR) != 0)
-			throw std::runtime_error("Can't create the output folder: " + workingDir + OUTPUT_DIR);
-
-		// Clean output and debug directory
-		if (system("rm -rf " OUTPUT_DIR "*") != 0)
-			LOGW << "Can't clean output directory: " + workingDir + OUTPUT_DIR;
-		if (system("rm -rf " DEBUG_DIR "*") != 0)
-			LOGW << "Can't clean debug directory: " + workingDir + DEBUG_DIR;
+		Utils::cleanDirectories(workingDir);
 
 		// Load the configuration file
 		LOGI << "Loading configuration";
