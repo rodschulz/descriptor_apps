@@ -2,10 +2,6 @@
  * Author: rodrigo
  * 2015
  */
-#include <stdlib.h>
-#include <iostream>
-#include <iomanip>
-#include <string>
 #include <boost/lexical_cast.hpp>
 #include <plog/Log.h>
 #include <plog/Appenders/ColorConsoleAppender.h>

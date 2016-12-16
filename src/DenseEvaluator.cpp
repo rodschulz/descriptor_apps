@@ -2,19 +2,15 @@
  * Author: rodrigo
  * 2016
  */
-#include <stdlib.h>
-#include <iostream>
-#include <iomanip>
-#include <string>
 #include <plog/Log.h>
 #include <plog/Appenders/ColorConsoleAppender.h>
 #include <opencv2/core/core.hpp>
 #include <boost/lexical_cast.hpp>
 #include "Config.hpp"
 #include "Loader.hpp"
-#include "DCH.hpp"
 #include "Writer.hpp"
 #include "Clustering.hpp"
+#include "DCH.hpp"
 #include "SHOT.hpp"
 
 

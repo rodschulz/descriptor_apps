@@ -2,10 +2,6 @@
  * Author: rodrigo
  * 2016
  */
-#include <stdlib.h>
-#include <iostream>
-#include <iomanip>
-#include <string>
 #include <plog/Log.h>
 #include <plog/Appenders/ColorConsoleAppender.h>
 #include <opencv2/core/core.hpp>
