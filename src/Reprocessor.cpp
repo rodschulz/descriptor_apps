@@ -14,6 +14,7 @@
 #include "Config.hpp"
 #include "CloudFactory.hpp"
 #include "PointFactory.hpp"
+#include "SHOT.hpp"
 
 
 #define CONFIG_LOCATION "config/config_reprocessor.yaml"
@@ -138,6 +139,18 @@ int findTargetPoint(const pcl::PointCloud<pcl::PointNormal>::Ptr cloud_,
 	return target;
 }
 
+void updateFile(const Eigen::VectorXf &descriptor_,
+				const int target_,
+				const DescriptorParamsPtr &params_,
+				YAML::Node &node_)
+{
+	node_["descriptor"] = params_->toNode();
+	node_["descriptor"]["point_index"] =  target_;
+
+	std::vector<float> data(descriptor_.data(), descriptor_.data() + descriptor_.rows() * descriptor_.cols());
+	node_["descriptor"]["data"] = data;
+}
+
 int main(int _argn, char **_argv)
 {
 	static plog::ColorConsoleAppender<plog::TxtFormatter> consoleAppender;
@@ -184,9 +197,9 @@ int main(int _argn, char **_argv)
 				LOGI << "Reprocessing " << f->filename();
 				YAML::Node file =  YAML::LoadFile(f->string());
 
+
 				int target = findTargetPoint(cloud, file["grasp"]["grasp_pose"]["pose"]);
-				std::string id = f->filename().string();
-				id = id.substr(0, id.find_last_of('.'));
+				std::string id = f->stem().string();
 				LOGI << "...target point: " << target;
 
 				if (debug)
@@ -198,15 +211,26 @@ int main(int _argn, char **_argv)
 
 
 				LOGI << "...running " + descType[params->type];
+				Eigen::VectorXf descriptor;
 				switch (params->type)
 				{
 				default:
 				case DESCRIPTOR_DCH:
+					// DCH::calculateDescriptor();
 					break;
 
 				case DESCRIPTOR_SHOT:
+					SHOT::computePoint(cloud, params, target, descriptor);
 					break;
 				}
+
+				LOGI << "...generating output file";
+				updateFile(descriptor, target, params, file);
+				file["reprocessed"] = true;
+
+				std::string outname = OUTPUT_DIR + f->filename().string();
+				std::ofstream fout(outname.c_str());
+				fout << file;
 			}
 		}
 	}
