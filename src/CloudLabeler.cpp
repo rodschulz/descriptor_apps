@@ -67,7 +67,7 @@ int main(int _argn, char **_argv)
 		if (!Loader::loadDescriptors(cacheLocation, cloudFilename, normalEstimationRadius, descriptorParams, smoothingParams, descriptors))
 		{
 			LOGI << "...cache not found, performing descriptor dense evaluation";
-			DCH::calculateDescriptors(cloud, descriptorParams, descriptors);
+			DCH::computeDense(cloud, descriptorParams, descriptors);
 			Writer::writeDescriptorsCache(descriptors, cacheLocation, cloudFilename, normalEstimationRadius, descriptorParams, smoothingParams);
 		}
 		LOGI << "...done";

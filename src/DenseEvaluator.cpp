@@ -81,7 +81,7 @@ int main(int _argn, char **_argv)
 			default:
 				LOGW << "WARNING: wrong descriptor type, assuming DCH";
 			case DESCRIPTOR_DCH:
-				DCH::calculateDescriptors(cloud, descriptorParams, descriptors);
+				DCH::computeDense(cloud, descriptorParams, descriptors);
 				break;
 
 			case DESCRIPTOR_SHOT:
