@@ -28,31 +28,31 @@ void crawlDirectory(const std::string &directory_,
 {
 	boost::filesystem::path target(directory_);
 	boost::filesystem::directory_iterator it(target), eod;
-	BOOST_FOREACH(boost::filesystem::path const & filePath, std::make_pair(it, eod))
+	BOOST_FOREACH(boost::filesystem::path const & filepath, std::make_pair(it, eod))
 	{
-		if (is_regular_file(filePath))
+		if (is_regular_file(filepath))
 		{
 			// Extract object id
-			std::string id = filePath.filename().string();
+			std::string id = filepath.string();
 			int index = id.find_last_of('_');
 			index = id.find_last_of('_', index - 1);
 			id = id.substr(0, index);
 
-			LOGD << "File: " << filePath.filename().string();
+			LOGD << "File: " << filepath.filename().string();
 
-			std::string extension = filePath.extension().string();
+			std::string extension = filepath.extension().string();
 			if (boost::iequals(extension, ".yaml"))
-				files_[id].push_back(filePath);
+				files_[id].push_back(filepath);
 			else if (boost::iequals(extension, ".pcd"))
 			{
 				if (cloudMap_.find(id) == cloudMap_.end())
-					cloudMap_[id] = filePath.string();
+					cloudMap_[id] = filepath.string();
 				else
 					LOGW << "Duplicated id (" << id << "), ignoring new value";
 			}
 		}
 		else
-			crawlDirectory(filePath.string(), cloudMap_, files_);
+			crawlDirectory(filepath.string(), cloudMap_, files_);
 	}
 }
 
