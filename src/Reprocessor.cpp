@@ -185,6 +185,7 @@ int main(int _argn, char **_argv)
 
 		LOGI << "Processing data";
 		bool debug = Config::debugEnabled();
+		int processed = 0, generated = 0;
 		for (std::map<std::string, std::vector<boost::filesystem::path> >::const_iterator it = dataFiles.begin(); it != dataFiles.end(); it++)
 		{
 			LOGI << "Loading cloud " << cloudMap[it->first];
@@ -197,6 +198,7 @@ int main(int _argn, char **_argv)
 			{
 				LOGI << "Reprocessing " << f->filename();
 				YAML::Node file =  YAML::LoadFile(f->string());
+				processed++;
 
 
 				int target = findTargetPoint(cloud, file["grasp"]["grasp_pose"]["pose"]);
@@ -225,6 +227,7 @@ int main(int _argn, char **_argv)
 					break;
 				}
 
+
 				LOGI << "...generating output file";
 				updateFile(descriptor, target, params, file);
 				file["reprocessed"] = true;
@@ -232,8 +235,12 @@ int main(int _argn, char **_argv)
 				std::string outname = OUTPUT_DIR + f->filename().string();
 				std::ofstream fout(outname.c_str());
 				fout << file;
+
+				generated++;
 			}
 		}
+
+		LOGI << "Processed " << processed << " files -- Generated " << generated << " files";
 	}
 	catch (std::exception &_ex)
 	{
