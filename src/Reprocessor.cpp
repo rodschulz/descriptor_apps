@@ -15,6 +15,7 @@
 #include "CloudFactory.hpp"
 #include "PointFactory.hpp"
 #include "SHOT.hpp"
+#include "DCH.hpp"
 
 
 #define CONFIG_LOCATION "config/config_reprocessor.yaml"
@@ -216,7 +217,7 @@ int main(int _argn, char **_argv)
 				{
 				default:
 				case DESCRIPTOR_DCH:
-					// DCH::calculateDescriptor();
+					DCH::computePoint(cloud, params, target, descriptor);
 					break;
 
 				case DESCRIPTOR_SHOT:
