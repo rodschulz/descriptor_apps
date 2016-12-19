@@ -107,7 +107,7 @@ int main(int _argn, char **_argv)
 
 			// Evaluate the descriptor around the target point
 			LOGI << "...calculating descriptor at " << targetPoint;
-			Descriptor descriptor = DCH::calculateDescriptor(cloud, descriptorParams, targetPoint);
+			std::vector<BandPtr> descriptor = DCH::calculateDescriptor(cloud, descriptorParams, targetPoint);
 
 
 			// Generate histograms
