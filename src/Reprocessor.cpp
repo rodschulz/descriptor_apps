@@ -219,8 +219,12 @@ int main(int _argn, char **_argv)
 				{
 				default:
 				case DESCRIPTOR_DCH:
+				{
+					DCHParams *p = dynamic_cast<DCHParams *>(params.get());
+					p->angle = file["orientation"]["angle"].as<float>() + M_PI / 2; // pi/2 to align the zero band
 					DCH::computePoint(cloud, params, target, descriptor);
-					break;
+				}
+				break;
 
 				case DESCRIPTOR_SHOT:
 					SHOT::computePoint(cloud, params, target, descriptor);
