@@ -221,7 +221,7 @@ int main(int _argn, char **_argv)
 				case DESCRIPTOR_DCH:
 				{
 					DCHParams *p = dynamic_cast<DCHParams *>(params.get());
-					p->angle = file["orientation"]["angle"].as<float>() + M_PI / 2; // pi/2 to align the zero band
+					p->angle = M_PI / 2 - file["orientation"]["angle"].as<float>(); // pi/2 to align the zero band
 					DCH::computePoint(cloud, params, target, descriptor);
 				}
 				break;
