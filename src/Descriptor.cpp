@@ -110,14 +110,9 @@ int main(int _argn, char **_argv)
 			std::vector<BandPtr> descriptor = DCH::calculateDescriptor(cloud, descriptorParams, targetPoint);
 
 
-			// Generate histograms
-			LOGI << "...generating histograms";
-			std::vector<Hist> histograms = DCH::generateAngleHistograms(descriptor, params->useProjection);
-
-
 			// Write output
 			LOGI << "...writing output";
-			Writer::writeOuputData(cloud, descriptor, histograms, descriptorParams, targetPoint);
+			Writer::writeOuputData(cloud, descriptor, descriptorParams, targetPoint);
 		}
 		else
 			LOGW << "App only works with DCH descriptor";
