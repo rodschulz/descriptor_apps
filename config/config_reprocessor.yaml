@@ -1,6 +1,7 @@
 ---
 # flag to enable/disable the debug generation
 debug: false
+idDebug: true
 # radius used for the normal vectors estimation
 normalEstimationRadius: -1
 # calculation cache directory
@@ -16,9 +17,9 @@ descriptor:
       bidirectional: false
       useProjection: false
       sequenceBin: 0.01 # mts
-      sequenceStat: mean # mean, median, hist
+      sequenceStat: histogram # mean, median, histogram
     SHOT:
-      searchRadius: 0.02 # mts
+      searchRadius: 0.03 # mts
     USC:
       searchRadius: 0.02 # mts
     PFH:

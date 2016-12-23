@@ -222,7 +222,10 @@ int main(int _argn, char **_argv)
 				{
 					DCHParams *p = dynamic_cast<DCHParams *>(params.get());
 					p->angle = M_PI / 2 - file["orientation"]["angle"].as<float>(); // pi/2 to align the zero band
-					DCH::computePoint(cloud, params, target, descriptor);
+					if (Config::get()["idDebug"].as<bool>())
+						DCH::computePoint(cloud, params, target, descriptor, f->stem().string());
+					else
+						DCH::computePoint(cloud, params, target, descriptor);
 				}
 				break;
 
