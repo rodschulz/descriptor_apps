@@ -18,7 +18,7 @@
 
 struct CodebookFeatures
 {
-	DescriptorType type;
+	Params::DescriptorType type;
 	int nbands, nbins;
 	float searchRadius;
 	bool bidirectional;
@@ -28,10 +28,10 @@ struct CodebookFeatures
 std::string generateFilename(const int dataRows_,
 							 const int dataCols_,
 							 const ClusteringParams &params_,
-							 const DescriptorType type_)
+							 const Params::DescriptorType type_)
 {
 	std::string str = "codebook";
-	str += "_" + descType[type_].substr(11)
+	str += "_" + Params::descType[type_].substr(11)
 		   + "_" + boost::lexical_cast<std::string>(dataRows_) + "-" + boost::lexical_cast<std::string>(dataCols_)
 		   + "_c" + boost::lexical_cast<std::string>(params_.clusterNumber);
 
@@ -41,13 +41,13 @@ std::string generateFilename(const int dataRows_,
 
 	switch (params_.implementation)
 	{
-	case CLUSTERING_OPENCV:
+	case Params::CLUSTERING_OPENCV:
 		str += "_opencv";
 		break;
-	case CLUSTERING_KMEANS:
+	case Params::CLUSTERING_KMEANS:
 		str += "_kmeans";
 		break;
-	case CLUSTERING_STOCHASTIC:
+	case Params::CLUSTERING_STOCHASTIC:
 		str += "_stochastic";
 		break;
 	}
@@ -58,7 +58,7 @@ std::string generateFilename(const int dataRows_,
 
 CodebookFeatures validCenters(std::vector<std::pair<cv::Mat, std::map<std::string, std::string> > > &centers_)
 {
-	DescriptorType type = DESCRIPTOR_UNKNOWN;
+	Params::DescriptorType type = Params::DESCRIPTOR_UNKNOWN;
 	int nbands = -1;
 	int nbins = -1;
 	int ncols = 0;
@@ -72,7 +72,7 @@ CodebookFeatures validCenters(std::vector<std::pair<cv::Mat, std::map<std::strin
 			 << " - searchRadius:" << centers_[i].second["searchRadius"]
 			 << " - sequenceBin:" << centers_[i].second["sequenceBin"];
 
-		DescriptorType auxType = DescriptorParams::toType(centers_[i].second["type"]);
+		Params::DescriptorType auxType = DescriptorParams::toType(centers_[i].second["type"]);
 		int auxBands = nbands;
 		int auxBins = nbins;
 		int auxCols = centers_[i].first.cols;
@@ -84,17 +84,17 @@ CodebookFeatures validCenters(std::vector<std::pair<cv::Mat, std::map<std::strin
 		default:
 			std::runtime_error("Wrong descriptor type read from file");
 
-		case DESCRIPTOR_DCH:
+		case Params::DESCRIPTOR_DCH:
 			auxBands = boost::lexical_cast<int>(centers_[i].second["bandNumber"]);
 			auxSearchRadius = boost::lexical_cast<float>(centers_[i].second["searchRadius"]);
 			auxBidir = boost::iequals(centers_[i].second["bidirectional"], "true");
 			auxBins = (int)(auxSearchRadius / boost::lexical_cast<float>(centers_[i].second["sequenceBin"]));
 			break;
 
-		case DESCRIPTOR_SHOT:
-		case DESCRIPTOR_USC:
-		case DESCRIPTOR_PFH:
-		case DESCRIPTOR_ROPS:
+		case Params::DESCRIPTOR_SHOT:
+		case Params::DESCRIPTOR_USC:
+		case Params::DESCRIPTOR_PFH:
+		case Params::DESCRIPTOR_ROPS:
 			auxSearchRadius = boost::lexical_cast<float>(centers_[i].second["searchRadius"]);
 			break;
 		}
@@ -111,7 +111,7 @@ CodebookFeatures validCenters(std::vector<std::pair<cv::Mat, std::map<std::strin
 		else
 		{
 			if (type != auxType)
-				throw std::runtime_error("Mixing descriptors (" + descType[type] + " != " + descType[auxType] + ")");
+				throw std::runtime_error("Mixing descriptors (" + Params::descType[type] + " != " + Params::descType[auxType] + ")");
 			if (ncols != auxCols)
 				throw std::runtime_error((std::string)"Mixing descriptor sizes (" + boost::lexical_cast<std::string>(ncols) + " != " + boost::lexical_cast<std::string>(auxCols) + ")");
 			if (nbands != auxBands)

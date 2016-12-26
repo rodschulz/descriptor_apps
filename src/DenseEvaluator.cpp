@@ -18,10 +18,10 @@
 #define LOGGING_LOCATION "config/logging.yaml"
 
 
-std::string genFilename(const int rows_, const int cols_, const DescriptorType type_)
+std::string genFilename(const int rows_, const int cols_, const Params::DescriptorType type_)
 {
 	std::string filename = "centers_"
-						   + descType[type_].substr(11)
+						   + Params::descType[type_].substr(11)
 						   + "_" + boost::lexical_cast<std::string>(rows_)
 						   + "_" + boost::lexical_cast<std::string>(cols_)
 						   + ".dat";
@@ -70,7 +70,7 @@ int main(int _argn, char **_argv)
 		LOGI << "...loaded " << cloud->size() << " points in cloud";
 
 		// Dense evaluation over the point cloud
-		LOGI << "Starting dense evaluation (" << descType[descriptorParams->type] << ")";
+		LOGI << "Starting dense evaluation (" << Params::descType[descriptorParams->type] << ")";
 		cv::Mat descriptors;
 		if (!Loader::loadDescriptors(cacheLocation, cloudFilename, normalEstimationRadius, descriptorParams, smoothingParams, descriptors))
 		{
@@ -80,11 +80,11 @@ int main(int _argn, char **_argv)
 			{
 			default:
 				LOGW << "WARNING: wrong descriptor type, assuming DCH";
-			case DESCRIPTOR_DCH:
+			case Params::DESCRIPTOR_DCH:
 				DCH::computeDense(cloud, descriptorParams, descriptors);
 				break;
 
-			case DESCRIPTOR_SHOT:
+			case Params::DESCRIPTOR_SHOT:
 				SHOT::computeDense(cloud, descriptorParams, descriptors);
 				break;
 			}

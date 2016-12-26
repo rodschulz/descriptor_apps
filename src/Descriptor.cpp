@@ -17,32 +17,32 @@
 
 
 void genPointCloud(pcl::PointCloud<pcl::PointNormal>::Ptr &cloud_,
-				   const SynCloudType cloudType_)
+				   const Params::SynCloudType cloudType_)
 {
-	LOGI << "Generating cloud: " << cloudType[cloudType_];
+	LOGI << "Generating cloud: " << Params::cloudType[cloudType_];
 
 	switch (cloudType_)
 	{
 	default:
 		LOGW << "Wrong synthetic cloud params, assuming cube";
 
-	case CLOUD_CUBE:
+	case Params::CLOUD_CUBE:
 		cloud_ = CloudFactory::createCube(5, Eigen::Vector3f(0, 0, 0), 20000);
 		break;
 
-	case CLOUD_CYLINDER:
+	case Params::CLOUD_CYLINDER:
 		cloud_ = CloudFactory::createCylinderSection(2 * M_PI, 5, 10, Eigen::Vector3f(0, 0, 0), 20000);
 		break;
 
-	case CLOUD_SPHERE:
+	case Params::CLOUD_SPHERE:
 		cloud_ = CloudFactory::createSphereSection(2 * M_PI, 10, Eigen::Vector3f(0, 0, 0), 20000);
 		break;
 
-	case CLOUD_HALF_SPHERE:
+	case Params::CLOUD_HALF_SPHERE:
 		cloud_ = CloudFactory::createSphereSection(M_PI, 10, Eigen::Vector3f(0, 0, 0), 20000);
 		break;
 
-	case CLOUD_PLANE:
+	case Params::CLOUD_PLANE:
 		cloud_ = CloudFactory::createHorizontalPlane(-50, 50, 200, 300, 30, 20000);
 		break;
 	}

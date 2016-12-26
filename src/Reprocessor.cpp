@@ -213,12 +213,12 @@ int main(int _argn, char **_argv)
 				}
 
 
-				LOGI << "...running " + descType[params->type];
+				LOGI << "...running " + Params::descType[params->type];
 				Eigen::VectorXf descriptor;
 				switch (params->type)
 				{
 				default:
-				case DESCRIPTOR_DCH:
+				case Params::DESCRIPTOR_DCH:
 				{
 					DCHParams *p = dynamic_cast<DCHParams *>(params.get());
 					p->angle = M_PI / 2 - file["orientation"]["angle"].as<float>(); // pi/2 to align the zero band
@@ -229,7 +229,7 @@ int main(int _argn, char **_argv)
 				}
 				break;
 
-				case DESCRIPTOR_SHOT:
+				case Params::DESCRIPTOR_SHOT:
 					SHOT::computePoint(cloud, params, target, descriptor);
 					break;
 				}
