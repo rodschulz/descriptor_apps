@@ -26,7 +26,7 @@ descriptor:
       bidirectional: false
       useProjection: false
       sequenceBin: 0.01 # mts
-      sequenceStat: mean # mean, median, hist
+      stat: mean # mean, median, hist10, hist20, hb20, hb10
     SHOT:
       searchRadius: 0.02 # mts
     USC:

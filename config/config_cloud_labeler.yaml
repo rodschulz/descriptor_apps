@@ -23,7 +23,7 @@ descriptor:
       bidirectional: false
       useProjection: false
       sequenceBin: 0.005 # mts
-      sequenceStat: mean # mean or median
+      stat: mean # mean, median, hist10, hist20, hb20, hb10
 
 ##### cloud smoothing params #####
 cloudSmoothing:
