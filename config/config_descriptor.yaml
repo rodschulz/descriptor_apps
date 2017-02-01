@@ -2,7 +2,7 @@
 # flag to enable/disable the debug generation
 debug: false
 # cloud's descriptor target 
-targetPoint: 2238
+targetPoint: 4108 #2238 sphere 9586
 # radius used for the normal vectors estimation
 normalEstimationRadius: -1
 # calculation cache directory
@@ -12,12 +12,12 @@ cacheLocation: ../cache/
 descriptor:
     type: DCH
     DCH:
-      searchRadius: 0.03 # mts
+      searchRadius: 0.02 # mts
       bandNumber: 8
       bandWidth: 0.005 # mts
       bidirectional: false
       useProjection: false
-      sequenceBin: 0.01 # mts
+      binNumber: 3 # 3 bins of 0.01 mts
       stat: mean # mean, median, hist10, hist20, hb20, hb10
 
 ##### cloud smoothing params #####
@@ -29,5 +29,5 @@ cloudSmoothing:
 ##### Synthetic cloud generation params #####
 syntheticCloud:
     generateCloud: false
-    type: half_sphere # cube, cylinder, sphere, half_sphere, plane
+    type: plane # cube, cylinder, sphere, half_sphere, plane
 ...

@@ -22,7 +22,7 @@ descriptor:
       bandWidth: 0.005 # mts
       bidirectional: false
       useProjection: false
-      sequenceBin: 0.005 # mts
+      binNumber: 4 # 4 bins of 0.005 mts
       stat: mean # mean, median, hist10, hist20, hb20, hb10
 
 ##### cloud smoothing params #####

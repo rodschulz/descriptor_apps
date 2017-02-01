@@ -16,10 +16,10 @@ descriptor:
       bandWidth: 0.005 # mts
       bidirectional: false
       useProjection: false
-      sequenceBin: 0.01 # mts
-      stat: hist10 # mean, median, hist10, hist20, hb20, hb10
+      binNumber: 3 # 3 bins of 0.01 mts
+      stat: 'hist10' # mean, median, hist10, hist20, hb20, hb10
     SHOT:
-      searchRadius: 0.03 # mts
+      searchRadius: 0.035 # mts
     USC:
       searchRadius: 0.02 # mts
     PFH:
