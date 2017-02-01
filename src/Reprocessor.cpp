@@ -14,8 +14,11 @@
 #include "Config.hpp"
 #include "CloudFactory.hpp"
 #include "PointFactory.hpp"
-#include "SHOT.hpp"
 #include "DCH.hpp"
+#include "SHOT.hpp"
+#include "PFH.hpp"
+#include "FPFH.hpp"
+#include "SpinImage.hpp"
 
 
 #define CONFIG_LOCATION "config/config_reprocessor.yaml"
@@ -218,6 +221,8 @@ int main(int _argn, char **_argv)
 				switch (params->type)
 				{
 				default:
+					throw std::runtime_error("Descriptor calculation not implemented");
+
 				case Params::DESCRIPTOR_DCH:
 				{
 					DCHParams *p = dynamic_cast<DCHParams *>(params.get());
@@ -231,6 +236,26 @@ int main(int _argn, char **_argv)
 
 				case Params::DESCRIPTOR_SHOT:
 					SHOT::computePoint(cloud, params, target, descriptor);
+					break;
+
+				// case Params::DESCRIPTOR_USC:
+				// 	USC::computePoint(cloud, params, target, descriptor);
+				// 	break;
+
+				case Params::DESCRIPTOR_PFH:
+					PFH::computePoint(cloud, params, target, descriptor);
+					break;
+
+				case Params::DESCRIPTOR_FPFH:
+					FPFH::computePoint(cloud, params, target, descriptor);
+					break;
+
+				// case Params::DESCRIPTOR_ROPS:
+				// 	ROPS::computePoint(cloud, params, target, descriptor);
+				// 	break;
+
+				case Params::DESCRIPTOR_SPIN_IMAGE:
+					SpinImage::computePoint(cloud, params, target, descriptor);
 					break;
 				}
 

@@ -9,7 +9,7 @@ cacheLocation: ../cache/
 
 ##### descriptor calculation params #####
 descriptor:
-    type: DCH # DCH, SHOT, USC, PFH, ROPS
+    type: FPFH # DCH, SHOT, USC, PFH, FPFH, ROPS, SpinImage
     DCH:
       searchRadius: 0.03 # mts
       bandNumber: 8
@@ -21,9 +21,17 @@ descriptor:
     SHOT:
       searchRadius: 0.035 # mts
     USC:
-      searchRadius: 0.02 # mts
+      searchRadius: 0.03 # mts
     PFH:
-      searchRadius: 0.02 # mts
+      searchRadius: 0.03 # mts
+    FPFH:
+      searchRadius: 0.03 # mts
     ROPS:
-      searchRadius: 0.02 # mts
+      searchRadius: 0.03 # mts
+      partitionsNumber: 5
+      rotationsNumber: 3
+      supportRadius: 0.025
+    SpinImage:
+      searchRadius: 0.03 # mts
+      imageWidth: 8
 ...
