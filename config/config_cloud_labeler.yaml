@@ -24,6 +24,20 @@ descriptor:
       useProjection: false
       binNumber: 4 # 4 bins of 0.005 mts
       stat: mean # mean, median, hist10, hist20, hb20, hb10
+    SHOT:
+      searchRadius: 0.02 # mts
+    USC:
+      searchRadius: 0.02 # mts
+    PFH:
+      searchRadius: 0.02 # mts
+    ROPS:
+      searchRadius: 0.03 # mts
+      partitionsNumber: 5
+      rotationsNumber: 3
+      supportRadius: 0.025
+    SpinImage:
+      searchRadius: 0.03 # mts
+      imageWidth: 8
 
 ##### cloud smoothing params #####
 cloudSmoothing:

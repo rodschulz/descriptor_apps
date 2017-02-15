@@ -18,7 +18,7 @@ kmeans:
 
 ##### descriptor calculation params #####
 descriptor:
-    type: SHOT # DCH, SHOT, USC, PFH, ROPS
+    type: DCH # DCH, SHOT, USC, PFH, ROPS
     DCH:
       searchRadius: 0.03 # mts
       bandNumber: 8
@@ -34,7 +34,13 @@ descriptor:
     PFH:
       searchRadius: 0.02 # mts
     ROPS:
-      searchRadius: 0.02 # mts
+      searchRadius: 0.03 # mts
+      partitionsNumber: 5
+      rotationsNumber: 3
+      supportRadius: 0.025
+    SpinImage:
+      searchRadius: 0.03 # mts
+      imageWidth: 8
 
 ##### clustering params #####
 clustering:
