@@ -70,6 +70,7 @@ CodebookFeatures validCenters(std::vector<std::pair<cv::Mat, std::map<std::strin
 		LOGD << "type:" << centers_[i].second["type"]
 			 << " - nbands:" << centers_[i].second["bandNumber"]
 			 << " - searchRadius:" << centers_[i].second["searchRadius"]
+			 << " - binNumber:" << centers_[i].second["binNumber"]
 			 << " - sequenceBin:" << centers_[i].second["sequenceBin"];
 
 		Params::DescriptorType auxType = DescriptorParams::toType(centers_[i].second["type"]);
@@ -88,7 +89,11 @@ CodebookFeatures validCenters(std::vector<std::pair<cv::Mat, std::map<std::strin
 			auxBands = boost::lexical_cast<int>(centers_[i].second["bandNumber"]);
 			auxSearchRadius = boost::lexical_cast<float>(centers_[i].second["searchRadius"]);
 			auxBidir = boost::iequals(centers_[i].second["bidirectional"], "true");
-			auxBins = (int)(auxSearchRadius / boost::lexical_cast<float>(centers_[i].second["sequenceBin"]));
+
+			if (centers_[i].second.find("binNumber") != centers_[i].second.end())
+				auxBins = boost::lexical_cast<int>(centers_[i].second["binNumber"]);
+			else
+				auxBins = (int)(auxSearchRadius / boost::lexical_cast<float>(centers_[i].second["sequenceBin"]));
 			break;
 
 		case Params::DESCRIPTOR_SHOT:
