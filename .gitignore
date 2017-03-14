@@ -1,5 +1,6 @@
 build/*
 cache/*
+config/*.dat
 input/*
 debug/*
 proj/*
@@ -7,4 +8,5 @@ output/*
 .settings/*
 .cproject
 .project
-config/*.dat
+*.png
+*.cam
