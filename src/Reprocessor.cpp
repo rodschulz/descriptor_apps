@@ -238,10 +238,6 @@ int main(int _argn, char **_argv)
 					SHOT::computePoint(cloud, params, target, descriptor);
 					break;
 
-				// case Params::DESCRIPTOR_USC:
-				// 	USC::computePoint(cloud, params, target, descriptor);
-				// 	break;
-
 				case Params::DESCRIPTOR_PFH:
 					PFH::computePoint(cloud, params, target, descriptor);
 					break;
@@ -249,10 +245,6 @@ int main(int _argn, char **_argv)
 				case Params::DESCRIPTOR_FPFH:
 					FPFH::computePoint(cloud, params, target, descriptor);
 					break;
-
-				// case Params::DESCRIPTOR_ROPS:
-				// 	ROPS::computePoint(cloud, params, target, descriptor);
-				// 	break;
 
 				case Params::DESCRIPTOR_SPIN_IMAGE:
 					SpinImage::computePoint(cloud, params, target, descriptor);
