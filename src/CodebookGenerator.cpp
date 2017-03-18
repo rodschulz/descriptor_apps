@@ -10,6 +10,7 @@
 #include "Config.hpp"
 #include "Loader.hpp"
 #include "Writer.hpp"
+#include "ClosestPermutationMetric.hpp"
 
 
 #define CONFIG_LOCATION "config/config_codebook_generator.yaml"
@@ -19,7 +20,7 @@
 struct CodebookFeatures
 {
 	Params::DescriptorType type;
-	int nbands, nbins;
+	int nbands, nbins, descriptorSize;
 	float searchRadius;
 	bool bidirectional;
 };
@@ -56,7 +57,8 @@ std::string generateFilename(const int dataRows_,
 	return str;
 }
 
-CodebookFeatures validateCenter(std::vector<std::pair<cv::Mat, std::map<std::string, std::string> > > &centers_)
+
+CodebookFeatures validateCenters(std::vector<std::pair<cv::Mat, std::map<std::string, std::string> > > &centers_)
 {
 	Params::DescriptorType type = Params::DESCRIPTOR_UNKNOWN;
 	int nbands = -1;
@@ -136,10 +138,48 @@ CodebookFeatures validateCenter(std::vector<std::pair<cv::Mat, std::map<std::str
 	features.type = type;
 	features.nbands = nbands;
 	features.nbins = nbins;
+	features.descriptorSize = ncols;
 	features.searchRadius = searchRadius;
 	features.bidirectional = bidirectional;
 
 	return features;
+}
+
+
+bool validateClustering(CodebookFeatures &features_, ClusteringParams &params_)
+{
+	bool customClustering = params_.implementation == Params::CLUSTERING_KMEANS ||
+							params_.implementation == Params::CLUSTERING_STOCHASTIC;
+	bool metricClosest = params_.metric->getType() == METRIC_CLOSEST_PERMUTATION ||
+						 params_.metric->getType() == METRIC_CLOSEST_PERMUTATION_WITH_CONFIDENCE;
+
+	bool validConfiguration = true;
+	if (customClustering && metricClosest)
+	{
+		if (features_.type != Params::DESCRIPTOR_DCH)
+		{
+			LOGE << "Wrong metric-descriptor combination";
+			LOGE << "\t"
+				 << metricType[params_.metric->getType()]
+				 << " can be used only with DCH (current "
+				 << Params::descType[features_.type] << ")";
+			validConfiguration = false;
+		}
+		else
+		{
+			float bandSize = features_.descriptorSize / features_.nbands;
+			ClosestPermutationMetric *closestMetric = (ClosestPermutationMetric *)params_.metric.get();
+			if (abs(closestMetric->getPermutationSize() - bandSize) > 0)
+			{
+				LOGE << "Wrong metric params";
+				LOGE << "\tbands size mismatch metric config ("
+					 << bandSize << " != " << closestMetric->getPermutationSize() << ")";
+				validConfiguration = false;
+			}
+		}
+	}
+
+	return validConfiguration;
 }
 
 
@@ -179,8 +219,13 @@ int main(int _argn, char **_argv)
 
 
 		// Check if centers are ok to combine
-		LOGI << "Checking consistency";
-		CodebookFeatures features = validateCenter(centers);
+		LOGI << "Checking data consistency";
+		CodebookFeatures features = validateCenters(centers);
+
+		LOGI << "Checking configuration consistency";
+		ClusteringParams params = Config::getClusteringParams();
+		if (!validateClustering(features, params))
+			throw std::runtime_error("Invalid clustering configuration");
 
 
 		// Merge all the centers in one matrix
@@ -197,7 +242,7 @@ int main(int _argn, char **_argv)
 		// Calculate the codebook from the loaded centers
 		LOGI << "Calculating codebook (clustering)";
 		ClusteringResults results;
-		Clustering::searchClusters(data, Config::getClusteringParams(), results);
+		Clustering::searchClusters(data, params, results);
 
 
 		// Write the codebook to disk
