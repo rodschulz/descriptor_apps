@@ -56,7 +56,7 @@ std::string generateFilename(const int dataRows_,
 	return str;
 }
 
-CodebookFeatures validCenters(std::vector<std::pair<cv::Mat, std::map<std::string, std::string> > > &centers_)
+CodebookFeatures validateCenter(std::vector<std::pair<cv::Mat, std::map<std::string, std::string> > > &centers_)
 {
 	Params::DescriptorType type = Params::DESCRIPTOR_UNKNOWN;
 	int nbands = -1;
@@ -180,7 +180,7 @@ int main(int _argn, char **_argv)
 
 		// Check if centers are ok to combine
 		LOGI << "Checking consistency";
-		CodebookFeatures features = validCenters(centers);
+		CodebookFeatures features = validateCenter(centers);
 
 
 		// Merge all the centers in one matrix
