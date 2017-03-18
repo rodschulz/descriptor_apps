@@ -6,7 +6,9 @@ normalEstimationRadius: -1
 # calculation cache directory
 cacheLocation: ../cache/
 # location of the codebook used for the labeling
-codebookLocation: config/bow50_c7_1E-4_kmeans.dat
+# codebookLocation: config/codebook_DCH_200-144_c7_1E-04_opencv.dat
+# codebookLocation: config/codebook_DCH_200-72_c7_1E-04_opencv.dat
+codebookLocation: config/codebook_DCH_50-32_c7_1E-4_kmeans.dat
 
 ##### labeling params #####
 labeling:
@@ -17,26 +19,28 @@ labeling:
 descriptor:
     type: DCH
     DCH:
-      searchRadius: 0.02 # mts
+      searchRadius: 0.03 # mts
       bandNumber: 8
       bandWidth: 0.005 # mts
       bidirectional: false
       useProjection: false
-      binNumber: 4 # 4 bins of 0.005 mts
+      binNumber: 4
       stat: mean # mean, median, hist10, hist20, hb20, hb10
     SHOT:
-      searchRadius: 0.02 # mts
+      searchRadius: 0.035 # mts
     USC:
-      searchRadius: 0.02 # mts
+      searchRadius: 0.035 # mts
     PFH:
-      searchRadius: 0.02 # mts
+      searchRadius: 0.035 # mts
+    FPFH:
+      searchRadius: 0.035 # mts
     ROPS:
-      searchRadius: 0.03 # mts
+      searchRadius: 0.035 # mts
       partitionsNumber: 5
       rotationsNumber: 3
       supportRadius: 0.025
     SpinImage:
-      searchRadius: 0.03 # mts
+      searchRadius: 0.035 # mts
       imageWidth: 8
 
 ##### cloud smoothing params #####
