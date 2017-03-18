@@ -1,6 +1,7 @@
 build/*
 cache/*
 config/*.dat
+config/*/*.dat
 input/*
 debug/*
 proj/*
