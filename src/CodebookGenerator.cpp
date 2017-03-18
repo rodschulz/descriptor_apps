@@ -23,17 +23,21 @@ struct CodebookFeatures
 	int nbands, nbins, descriptorSize;
 	float searchRadius;
 	bool bidirectional;
+	Params::Statistic stat;
 };
 
 
 std::string generateFilename(const int dataRows_,
 							 const int dataCols_,
 							 const ClusteringParams &params_,
-							 const Params::DescriptorType type_)
+							 const Params::DescriptorType type_,
+							 const Params::Statistic stat_)
 {
+	std::string statStr = type_ == Params::DESCRIPTOR_DCH ? "_" + Params::toString(stat_) : "";
 	std::string str = "codebook";
 	str += "_" + Params::descType[type_].substr(11)
 		   + "_" + boost::lexical_cast<std::string>(dataRows_) + "-" + boost::lexical_cast<std::string>(dataCols_)
+		   + statStr
 		   + "_c" + boost::lexical_cast<std::string>(params_.clusterNumber);
 
 	char buffer[50];
@@ -66,6 +70,7 @@ CodebookFeatures validateCenters(std::vector<std::pair<cv::Mat, std::map<std::st
 	int ncols = 0;
 	float searchRadius = 0;
 	bool bidirectional = false;
+	Params::Statistic stat = Params::STAT_MEAN;
 
 	for (size_t i = 0; i < centers_.size(); i++)
 	{
@@ -81,6 +86,7 @@ CodebookFeatures validateCenters(std::vector<std::pair<cv::Mat, std::map<std::st
 		int auxCols = centers_[i].first.cols;
 		float auxSearchRadius = searchRadius;
 		bool auxBidir = bidirectional;
+		Params::Statistic auxStat = stat;
 
 		switch (auxType)
 		{
@@ -91,6 +97,7 @@ CodebookFeatures validateCenters(std::vector<std::pair<cv::Mat, std::map<std::st
 			auxBands = boost::lexical_cast<int>(centers_[i].second["bandNumber"]);
 			auxSearchRadius = boost::lexical_cast<float>(centers_[i].second["searchRadius"]);
 			auxBidir = boost::iequals(centers_[i].second["bidirectional"], "true");
+			auxStat = Params::toStatType(centers_[i].second["stat"]);
 
 			if (centers_[i].second.find("binNumber") != centers_[i].second.end())
 				auxBins = boost::lexical_cast<int>(centers_[i].second["binNumber"]);
@@ -116,6 +123,7 @@ CodebookFeatures validateCenters(std::vector<std::pair<cv::Mat, std::map<std::st
 			ncols = auxCols;
 			searchRadius = auxSearchRadius;
 			bidirectional = auxBidir;
+			stat = auxStat;
 		}
 		else
 		{
@@ -131,6 +139,8 @@ CodebookFeatures validateCenters(std::vector<std::pair<cv::Mat, std::map<std::st
 				LOGW << "Mixing search radiuses (" << searchRadius << " != " << auxSearchRadius << ")";
 			if (bidirectional != auxBidir)
 				LOGW << "Mixing bidirectional and no bidirectional bands";
+			if (stat != auxStat)
+				LOGW << "Mixing computed statistics (" << Params::stat[stat] << " != " << Params::stat[auxStat] << ")";
 		}
 	}
 
@@ -141,6 +151,7 @@ CodebookFeatures validateCenters(std::vector<std::pair<cv::Mat, std::map<std::st
 	features.descriptorSize = ncols;
 	features.searchRadius = searchRadius;
 	features.bidirectional = bidirectional;
+	features.stat = stat;
 
 	return features;
 }
@@ -250,7 +261,8 @@ int main(int _argn, char **_argv)
 		std::string filename = generateFilename(centers[0].first.rows,
 												centers[0].first.cols,
 												Config::getClusteringParams(),
-												features.type);
+												features.type,
+												features.stat);
 		Writer::writeCodebook(OUTPUT_DIR + filename,
 							  results.centers,
 							  Config::getClusteringParams(),
