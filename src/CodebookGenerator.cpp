@@ -99,7 +99,9 @@ CodebookFeatures validCenters(std::vector<std::pair<cv::Mat, std::map<std::strin
 		case Params::DESCRIPTOR_SHOT:
 		case Params::DESCRIPTOR_USC:
 		case Params::DESCRIPTOR_PFH:
+		case Params::DESCRIPTOR_FPFH:
 		case Params::DESCRIPTOR_ROPS:
+		case Params::DESCRIPTOR_SPIN_IMAGE:
 			auxSearchRadius = boost::lexical_cast<float>(centers_[i].second["searchRadius"]);
 			break;
 		}
