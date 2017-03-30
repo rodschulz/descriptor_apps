@@ -99,6 +99,9 @@ int main(int _argn, char **_argv)
 		int targetPoint = Config::getTargetPoint();
 		DescriptorParamsPtr descriptorParams = Config::getDescriptorParams();
 		DCHParams *params = dynamic_cast<DCHParams *>(descriptorParams.get());
+		params->angle = DEG2RAD(Config::get()["descriptor"]["DCH"]["angle"].as<float>(0));
+		LOGD << "Runtime angle: " << params->angle;
+
 		if (params)
 		{
 			if (targetPoint < 0 || targetPoint >= (int)cloud->size())

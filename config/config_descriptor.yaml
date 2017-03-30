@@ -2,7 +2,7 @@
 # flag to enable/disable the debug generation
 debug: false
 # cloud's descriptor target 
-targetPoint: 4108 #2238 sphere 9586
+targetPoint: 2238 #2238 plane:9376 - half-sphere:10152 - cylinder:16764
 # radius used for the normal vectors estimation
 normalEstimationRadius: -1
 # calculation cache directory
@@ -12,13 +12,42 @@ cacheLocation: ../cache/
 descriptor:
     type: DCH
     DCH:
-      searchRadius: 0.02 # mts
+      searchRadius: 0.03 # mts
       bandNumber: 8
       bandWidth: 0.005 # mts
       bidirectional: false
       useProjection: false
       binNumber: 3 # 3 bins of 0.01 mts
-      stat: mean # mean, median, hist10, hist20, hb20, hb10
+      stat: hist10 # mean, median, hist10, hist20, hb20, hb10
+
+      angle: 0 # computation angle only for descriptor testing
+
+      ## PLANE ##
+      # searchRadius: 10 # mts
+      # bandNumber: 8
+      # bandWidth: 2 # mts
+      # bidirectional: false
+      # useProjection: false
+      # binNumber: 3 # 3 bins of 0.01 mts
+      # stat: hist10 # mean, median, hist10, hist20, hb20, hb10
+
+      ## HALF SPHERE ##
+      # searchRadius: 7 # mts
+      # bandNumber: 8
+      # bandWidth: 1.5 # mts
+      # bidirectional: false
+      # useProjection: false
+      # binNumber: 3 # 3 bins of 0.01 mts
+      # stat: hist10 # mean, median, hist10, hist20, hb20, hb10
+
+      ## CYLINDER ##
+      # searchRadius: 4 # mts
+      # bandNumber: 8
+      # bandWidth: 1 # mts
+      # bidirectional: false
+      # useProjection: false
+      # binNumber: 3 # 3 bins of 0.01 mts
+      # stat: hist10 
 
 ##### cloud smoothing params #####
 cloudSmoothing:
@@ -29,5 +58,5 @@ cloudSmoothing:
 ##### Synthetic cloud generation params #####
 syntheticCloud:
     generateCloud: false
-    type: plane # cube, cylinder, sphere, half_sphere, plane
+    type: cylinder # cube, cylinder, sphere, half_sphere, plane
 ...
